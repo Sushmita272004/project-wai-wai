@@ -165,7 +165,7 @@ const ResumeParser = () => {
 
   return (
     <div style={styles.container}>
-      <h2 style={{ textAlign: 'center', marginBottom: '30px', color: '#fff' }}>Smart Resume Parsing System</h2>
+      <h2 style={{ textAlign: 'center', marginBottom: '30px', color: '#000' }}>Smart Resume Parsing System</h2>
 
       {/* STEP 1: UPLOAD AREA */}
       {!parsedData && (

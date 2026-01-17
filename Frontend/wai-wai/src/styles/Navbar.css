@@ -98,7 +98,7 @@ nav.scrolled {
   left: var(--space-4);
   right: var(--space-4);
   height: 2px;
-  background: var(--color-primary-600);
+  background: var(--color-gray-600);
   transform: scaleX(0);
   transform-origin: right;
   transition: transform 0.3s ease;
@@ -152,6 +152,7 @@ nav.scrolled {
 .cta-button:hover {
   transform: translateY(-3px);
   box-shadow: var(--shadow-lg);
+  color: white;
 }
 
 .cta-button:active {
@@ -282,6 +283,7 @@ nav.scrolled {
 .mobile-cta-button:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
+  color: white;
 }
 
 /* Media Queries */
