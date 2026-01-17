@@ -4,7 +4,8 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
 import JobGenerator from './pages/JobGenerator';
-import Auth from './pages/Auth'; // Import the new page
+import Auth from './pages/Auth';
+import ProtectedRoute from './components/ProtectedRoute'; // Import the guard
 import './App.css';
 
 function App() {
@@ -17,7 +18,17 @@ function App() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/auth" element={<Auth />} />
-              <Route path="/generate-job" element={<JobGenerator />} />
+              
+              {/* PROTECTED ROUTE */}
+              <Route 
+                path="/generate-job" 
+                element={
+                  <ProtectedRoute allowedRoles={['employer']}>
+                    <JobGenerator />
+                  </ProtectedRoute>
+                } 
+              />
+              
             </Routes>
           </main>
           <Footer />
