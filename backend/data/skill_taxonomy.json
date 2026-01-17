@@ -1,0 +1,236 @@
+{
+    "skills": {
+      "Python": {
+        "category": "Backend",
+        "difficulty": "Medium",
+        "avg_learning_hours": 120,
+        "prerequisites": ["Basic Programming Logic"],
+        "demand_trend": "High"
+      },
+      "FastAPI": {
+        "category": "Backend",
+        "difficulty": "Medium",
+        "avg_learning_hours": 40,
+        "prerequisites": ["Python", "HTTP Basics"],
+        "demand_trend": "Growing"
+      },
+      "Django": {
+        "category": "Backend",
+        "difficulty": "High",
+        "avg_learning_hours": 160,
+        "prerequisites": ["Python", "MVC Patterns"],
+        "demand_trend": "Stable"
+      },
+      "JavaScript": {
+        "category": "Frontend",
+        "difficulty": "Medium",
+        "avg_learning_hours": 100,
+        "prerequisites": ["HTML", "CSS"],
+        "demand_trend": "High"
+      },
+      "React": {
+        "category": "Frontend",
+        "difficulty": "Medium",
+        "avg_learning_hours": 80,
+        "prerequisites": ["JavaScript", "ES6"],
+        "demand_trend": "Very High"
+      },
+      "Node.js": {
+        "category": "Backend",
+        "difficulty": "Medium",
+        "avg_learning_hours": 60,
+        "prerequisites": ["JavaScript"],
+        "demand_trend": "High"
+      },
+      "HTML": {
+        "category": "Frontend",
+        "difficulty": "Low",
+        "avg_learning_hours": 20,
+        "prerequisites": [],
+        "demand_trend": "Stable"
+      },
+      "CSS": {
+        "category": "Frontend",
+        "difficulty": "Low",
+        "avg_learning_hours": 30,
+        "prerequisites": ["HTML"],
+        "demand_trend": "Stable"
+      },
+      "Docker": {
+        "category": "DevOps",
+        "difficulty": "Medium",
+        "avg_learning_hours": 40,
+        "prerequisites": ["Linux Basics"],
+        "demand_trend": "High"
+      },
+      "Kubernetes": {
+        "category": "DevOps",
+        "difficulty": "Hard",
+        "avg_learning_hours": 100,
+        "prerequisites": ["Docker", "Networking"],
+        "demand_trend": "Very High"
+      },
+      "AWS": {
+        "category": "Cloud",
+        "difficulty": "Hard",
+        "avg_learning_hours": 120,
+        "prerequisites": ["Networking", "Linux Basics"],
+        "demand_trend": "High"
+      },
+      "SQL": {
+        "category": "Database",
+        "difficulty": "Medium",
+        "avg_learning_hours": 50,
+        "prerequisites": [],
+        "demand_trend": "Stable"
+      },
+      "PostgreSQL": {
+        "category": "Database",
+        "difficulty": "Medium",
+        "avg_learning_hours": 30,
+        "prerequisites": ["SQL"],
+        "demand_trend": "High"
+      },
+      "MongoDB": {
+        "category": "Database",
+        "difficulty": "Medium",
+        "avg_learning_hours": 30,
+        "prerequisites": ["JSON Basics"],
+        "demand_trend": "High"
+      },
+      "Redis": {
+        "category": "Database",
+        "difficulty": "Medium",
+        "avg_learning_hours": 20,
+        "prerequisites": ["Basic Database Concepts"],
+        "demand_trend": "Medium"
+      },
+      "System Design": {
+        "category": "Architecture",
+        "difficulty": "Hard",
+        "avg_learning_hours": 150,
+        "prerequisites": ["Backend Development", "Database Scaling"],
+        "demand_trend": "Very High"
+      },
+      "CI/CD": {
+        "category": "DevOps",
+        "difficulty": "Medium",
+        "avg_learning_hours": 40,
+        "prerequisites": ["Git", "Scripting"],
+        "demand_trend": "High"
+      },
+      "Git": {
+        "category": "Tools",
+        "difficulty": "Low",
+        "avg_learning_hours": 15,
+        "prerequisites": [],
+        "demand_trend": "Essential"
+      },
+      "Machine Learning": {
+        "category": "Data Science",
+        "difficulty": "Hard",
+        "avg_learning_hours": 300,
+        "prerequisites": ["Python", "Statistics", "Linear Algebra"],
+        "demand_trend": "Explosive"
+      },
+      "TensorFlow": {
+        "category": "Data Science",
+        "difficulty": "Hard",
+        "avg_learning_hours": 100,
+        "prerequisites": ["Machine Learning", "Python"],
+        "demand_trend": "High"
+      },
+      "Java": {
+        "category": "Backend",
+        "difficulty": "Medium",
+        "avg_learning_hours": 150,
+        "prerequisites": ["OOP Concepts"],
+        "demand_trend": "Stable"
+      },
+      "Spring Boot": {
+        "category": "Backend",
+        "difficulty": "High",
+        "avg_learning_hours": 100,
+        "prerequisites": ["Java"],
+        "demand_trend": "High"
+      },
+      "TypeScript": {
+          "category": "Frontend",
+          "difficulty": "Medium",
+          "avg_learning_hours": 40,
+          "prerequisites": ["JavaScript"],
+          "demand_trend": "High"
+      },
+      "Go": {
+          "category": "Backend",
+          "difficulty": "Medium",
+          "avg_learning_hours": 80,
+          "prerequisites": ["C or Python knowledge helps"],
+          "demand_trend": "High"
+      },
+      "Rust": {
+          "category": "Systems",
+          "difficulty": "Very Hard",
+          "avg_learning_hours": 200,
+          "prerequisites": ["C++ or Low Level Concepts"],
+          "demand_trend": "Growing"
+      },
+      "Next.js": {
+          "category": "Frontend",
+          "difficulty": "Medium",
+          "avg_learning_hours": 50,
+          "prerequisites": ["React"],
+          "demand_trend": "High"
+      },
+      "Tailwind CSS": {
+          "category": "Frontend",
+          "difficulty": "Low",
+          "avg_learning_hours": 20,
+          "prerequisites": ["CSS"],
+          "demand_trend": "High"
+      },
+      "GraphQL": {
+          "category": "API",
+          "difficulty": "Medium",
+          "avg_learning_hours": 40,
+          "prerequisites": ["REST APIs"],
+          "demand_trend": "High"
+      },
+      "Cybersecurity Basics": {
+          "category": "Security",
+          "difficulty": "Medium",
+          "avg_learning_hours": 60,
+          "prerequisites": ["Networking"],
+          "demand_trend": "High"
+      },
+      "Linux": {
+          "category": "OS",
+          "difficulty": "Medium",
+          "avg_learning_hours": 50,
+          "prerequisites": [],
+          "demand_trend": "Essential"
+      }
+    },
+    "roles": {
+      "Junior Backend Developer": {
+        "required_skills": ["Python", "Git", "SQL", "FastAPI"],
+        "avg_salary_usd": 60000
+      },
+      "Senior Full Stack Developer": {
+        "required_skills": ["React", "Node.js", "System Design", "AWS", "Docker", "CI/CD"],
+        "avg_salary_usd": 140000
+      },
+      "DevOps Engineer": {
+        "required_skills": ["Docker", "Kubernetes", "AWS", "Linux", "CI/CD", "Python"],
+        "avg_salary_usd": 120000
+      },
+      "Data Scientist": {
+        "required_skills": ["Python", "Machine Learning", "SQL", "TensorFlow", "Pandas"],
+        "avg_salary_usd": 130000
+      },
+      "Frontend Developer": {
+        "required_skills": ["HTML", "CSS", "JavaScript", "React", "Git"],
+        "avg_salary_usd": 80000
+      }
+    }
+  }
