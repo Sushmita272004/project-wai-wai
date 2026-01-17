@@ -11,7 +11,7 @@ const Home = () => {
       </p>
       <div style={styles.buttonGroup}>
         <Link to="/generate-job">
-          <button style={styles.primaryBtn}>Try Job Generator</button>
+          <button style={styles.primaryBtn}> Job Generator</button>
         </Link>
       </div>
     </div>
