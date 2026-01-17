@@ -1,33 +1,93 @@
-/* Responsive Breakpoints */
+/* Responsive Breakpoints and Mobile-First Design */
 
-/* Tablet - 768px to 1023px */
+/* ============================================
+   LARGE SCREENS (1024px and up)
+   ============================================ */
+@media (min-width: 1024px) {
+  .container {
+    padding: 0 var(--space-8);
+  }
+
+  .section {
+    padding: var(--space-20) var(--space-8);
+  }
+}
+
+/* ============================================
+   TABLET & SMALL LAPTOPS (768px - 1023px)
+   ============================================ */
 @media (max-width: 1023px) {
   .section {
-    padding: 3rem 1.5rem;
+    padding: var(--space-16) var(--space-6);
   }
 
   .container {
-    padding: 0 1.5rem;
+    padding: 0 var(--space-6);
   }
 
   .grid-4,
   .grid-3 {
     grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+  }
+
+  .grid-2 {
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .card {
-    padding: 1.5rem;
+    padding: var(--space-5);
+  }
+
+  /* Typography adjustments */
+  h1 {
+    font-size: 2.25rem;
+    margin-bottom: var(--space-4);
+  }
+
+  h2 {
+    font-size: 1.875rem;
+    margin-bottom: var(--space-3);
+  }
+
+  h3 {
+    font-size: 1.5rem;
+    margin-bottom: var(--space-3);
+  }
+
+  p {
+    font-size: var(--text-md);
+    line-height: var(--leading-normal);
+  }
+
+  button {
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--text-md);
+  }
+
+  /* Form inputs */
+  input,
+  textarea,
+  select {
+    padding: var(--space-3) var(--space-4);
+    font-size: 16px;
   }
 }
 
-/* Mobile - below 768px */
+/* ============================================
+   PORTRAIT TABLETS & LARGE PHONES (600px - 767px)
+   ============================================ */
 @media (max-width: 768px) {
+  body {
+    font-size: 15px;
+  }
+
   .section {
-    padding: 2rem 1rem;
+    padding: var(--space-12) var(--space-4);
   }
 
   .container {
-    padding: 0 1rem;
+    padding: 0 var(--space-4);
   }
 
   /* Collapse all grids to single column */
@@ -35,25 +95,44 @@
   .grid-3,
   .grid-2 {
     grid-template-columns: 1fr;
+    gap: var(--space-3);
   }
 
   .card {
-    padding: 1.25rem;
+    padding: var(--space-4);
   }
 
   /* Typography adjustments */
   h1 {
     font-size: 1.75rem;
-    margin-bottom: 1rem;
+    margin-bottom: var(--space-3);
+    line-height: var(--leading-tight);
   }
 
   h2 {
     font-size: 1.5rem;
-    margin-bottom: 0.75rem;
+    margin-bottom: var(--space-2);
   }
 
   h3 {
     font-size: 1.25rem;
+    margin-bottom: var(--space-2);
+  }
+
+  h4 {
+    font-size: 1rem;
+    margin-bottom: var(--space-2);
+  }
+
+  h5,
+  h6 {
+    font-size: 0.95rem;
+    margin-bottom: var(--space-1);
+  }
+
+  p {
+    font-size: var(--text-md);
+    margin-bottom: var(--space-3);
   }
 
   /* Form inputs - 16px minimum to prevent iOS zoom */
@@ -61,41 +140,250 @@
   textarea,
   select {
     font-size: 16px;
-    padding: 0.75rem 1rem;
+    padding: var(--space-3) var(--space-3);
+    min-height: 44px;
+    border-radius: var(--radius-md);
   }
 
   button {
-    padding: 0.75rem 1.25rem;
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--text-md);
+    min-height: 44px;
+    border-radius: var(--radius-md);
   }
 
   /* Button groups stack vertically */
   .button-group {
+    display: flex;
     flex-direction: column;
     width: 100%;
+    gap: var(--space-3);
   }
 
   .button-group button,
   .button-group a {
     width: 100%;
   }
+
+  /* Images responsive */
+  img {
+    height: auto;
+    width: 100%;
+  }
+
+  /* Tables - horizontal scroll */
+  table {
+    font-size: var(--text-sm);
+  }
+
+  th,
+  td {
+    padding: var(--space-2) var(--space-3);
+  }
+
+  /* Modals and overlays */
+  .modal,
+  .modal-overlay {
+    width: 100%;
+    max-width: calc(100% - var(--space-4));
+  }
+
+  /* Flex adjustments */
+  .flex-column-reverse {
+    flex-direction: column-reverse;
+  }
 }
 
-/* Small Mobile - below 480px */
-@media (max-width: 480px) {
+/* ============================================
+   SMALL PHONES (480px - 599px)
+   ============================================ */
+@media (max-width: 599px) {
+  html {
+    font-size: 14px;
+  }
+
+  body {
+    line-height: var(--leading-normal);
+  }
+
   .section {
-    padding: 1.5rem 1rem;
+    padding: var(--space-8) var(--space-3);
+  }
+
+  .container {
+    padding: 0 var(--space-3);
   }
 
   .card {
-    padding: 1rem;
+    padding: var(--space-3);
   }
 
+  /* Typography - more aggressive scaling */
   h1 {
     font-size: 1.5rem;
+    margin-bottom: var(--space-2);
   }
 
   h2 {
     font-size: 1.25rem;
+    margin-bottom: var(--space-2);
+  }
+
+  h3 {
+    font-size: 1.1rem;
+    margin-bottom: var(--space-2);
+  }
+
+  p {
+    font-size: var(--text-md);
+    margin-bottom: var(--space-2);
+  }
+
+  /* Form elements */
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+    padding: var(--space-3) var(--space-3);
+    width: 100%;
+    border-radius: var(--radius-md);
+  }
+
+  button {
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--text-md);
+    width: 100%;
+    min-height: 44px;
+  }
+
+  /* Grid spacing */
+  .grid,
+  .grid-2,
+  .grid-3,
+  .grid-4 {
+    gap: var(--space-2);
+  }
+
+  /* Icon sizing */
+  svg {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Margin and padding adjustments */
+  .mt-lg { margin-top: var(--space-4) !important; }
+  .mb-lg { margin-bottom: var(--space-4) !important; }
+  .mt-md { margin-top: var(--space-3) !important; }
+  .mb-md { margin-bottom: var(--space-3) !important; }
+}
+
+/* ============================================
+   EXTRA SMALL PHONES (below 480px)
+   ============================================ */
+@media (max-width: 479px) {
+  html {
+    font-size: 13px;
+  }
+
+  .section {
+    padding: var(--space-6) var(--space-2);
+  }
+
+  .container {
+    padding: 0 var(--space-2);
+  }
+
+  .card {
+    padding: var(--space-2);
+  }
+
+  h1 {
+    font-size: 1.25rem;
+    margin-bottom: var(--space-2);
+  }
+
+  h2 {
+    font-size: 1.1rem;
+    margin-bottom: var(--space-1);
+  }
+
+  h3 {
+    font-size: 1rem;
+    margin-bottom: var(--space-1);
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+    padding: var(--space-2) var(--space-3);
+    width: 100%;
+  }
+
+  button {
+    min-height: 44px;
+  }
+
+  /* Disable horizontal scroll */
+  body,
+  html {
+    overflow-x: hidden;
+    width: 100%;
+  }
+
+  /* Utility classes for spacing */
+  .no-margin { margin: 0 !important; }
+  .no-padding { padding: 0 !important; }
+}
+
+/* ============================================
+   LANDSCAPE ORIENTATION (Mobile)
+   ============================================ */
+@media (max-height: 500px) and (orientation: landscape) {
+  .section {
+    padding: var(--space-4) var(--space-4);
+  }
+
+  h1 {
+    font-size: 1.5rem;
+    margin-bottom: var(--space-2);
+  }
+
+  h2 {
+    font-size: 1.25rem;
+    margin-bottom: var(--space-2);
+  }
+
+  button {
+    padding: var(--space-2) var(--space-3);
+  }
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+@media print {
+  body {
+    background: white;
+    color: black;
+  }
+
+  a {
+    text-decoration: underline;
+  }
+
+  button,
+  .button-group,
+  nav {
+    display: none;
+  }
+
+  .card {
+    page-break-inside: avoid;
+    border: 1px solid #ccc;
+  }
+}
   }
 
   input,

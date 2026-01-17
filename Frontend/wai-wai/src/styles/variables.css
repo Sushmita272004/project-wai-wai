@@ -1,36 +1,36 @@
 /* Global Design System Variables */
 :root {
-  /* Brand Colors */
-  --color-primary-50: #e6f7ff;
-  --color-primary-100: #cceeff;
-  --color-primary-200: #99ddff;
-  --color-primary-300: #66ccff;
-  --color-primary-400: #33bbff;
-  --color-primary-500: #0ea5e9; /* Core */
+  /* Brand Colors - Modern Teal & Navy Palette */
+  --color-primary-50: #f0f9ff;
+  --color-primary-100: #e0f2fe;
+  --color-primary-200: #bae6fd;
+  --color-primary-300: #7dd3fc;
+  --color-primary-400: #38bdf8;
+  --color-primary-500: #0ea5e9; /* Core - Professional Teal */
   --color-primary-600: #0284c7;
   --color-primary-700: #0369a1;
   --color-primary-800: #075985;
   --color-primary-900: #0c4a6e;
 
-  --color-accent-500: #8b5cf6; /* Vibrant accent */
-  --color-accent-600: #7c3aed;
-  --color-accent-700: #6d28d9;
+  --color-secondary-500: #1e40af; /* Deep Navy - for contrast */
+  --color-secondary-600: #1e3a8a;
+  --color-secondary-700: #1e3a8a;
 
-  --color-success-500: #22c55e;
-  --color-warning-500: #f59e0b;
-  --color-error-500: #ef4444;
+  --color-success-500: #10b981; /* Professional Green */
+  --color-warning-500: #f59e0b; /* Warm Amber */
+  --color-error-500: #ef4444; /* Clean Red */
 
-  /* Neutrals */
-  --color-gray-50: #f9fafb;
-  --color-gray-100: #f3f4f6;
-  --color-gray-200: #e5e7eb;
-  --color-gray-300: #d1d5db;
-  --color-gray-400: #9ca3af;
-  --color-gray-500: #6b7280;
-  --color-gray-600: #4b5563;
-  --color-gray-700: #374151;
-  --color-gray-800: #1f2937;
-  --color-gray-900: #0f172a; /* slightly darker for better contrast */
+  /* Neutrals - Professional Gray Scale */
+  --color-gray-50: #f8fafc;
+  --color-gray-100: #f1f5f9;
+  --color-gray-200: #e2e8f0;
+  --color-gray-300: #cbd5e1;
+  --color-gray-400: #94a3b8;
+  --color-gray-500: #64748b;
+  --color-gray-600: #475569;
+  --color-gray-700: #334155;
+  --color-gray-800: #1e293b;
+  --color-gray-900: #0f172a;
 
   --color-white: #ffffff;
   --color-black: #0b0f1a;

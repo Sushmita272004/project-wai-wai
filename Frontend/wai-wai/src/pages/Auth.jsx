@@ -2,9 +2,8 @@ import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import "../styles/Auth.css";
 import {
-  FiMail,
-  FiLock,
   FiBriefcase,
   FiUser,
   FiAlertCircle,
@@ -60,30 +59,30 @@ const Auth = () => {
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.wrapper}>
+    <div className="auth-container">
+      <div className="auth-wrapper">
         {/* Left Side - Branding */}
         <motion.div
-          style={styles.brandingSide}
+          className="auth-branding-side"
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <div style={styles.brandingContent}>
+          <div className="auth-branding-content">
             <motion.div
-              style={styles.logoSection}
+              className="auth-logo-section"
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              <div style={styles.largeLogo}>
+              <div className="auth-large-logo">
                 <FiBriefcase />
               </div>
-              <h2 style={styles.brandTitle}>Wevolve AI</h2>
+              <h2 className="auth-brand-title">Wevolve AI</h2>
             </motion.div>
 
             <motion.p
-              style={styles.brandSubtitle}
+              className="auth-brand-subtitle"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.4 }}
@@ -92,7 +91,7 @@ const Auth = () => {
             </motion.p>
 
             <motion.div
-              style={styles.features}
+              className="auth-features"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.6 }}
@@ -104,12 +103,12 @@ const Auth = () => {
               ].map((feature, index) => (
                 <motion.div
                   key={index}
-                  style={styles.featureItem}
+                  className="auth-feature-item"
                   initial={{ x: -20, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ duration: 0.4, delay: 0.7 + index * 0.1 }}
                 >
-                  <div style={styles.checkIcon}>✓</div>
+                  <div className="auth-feature-icon">✓</div>
                   <span>{feature}</span>
                 </motion.div>
               ))}
@@ -119,14 +118,14 @@ const Auth = () => {
 
         {/* Right Side - Form */}
         <motion.div
-          style={styles.formSide}
+          className="auth-form-side"
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <div style={styles.formContainer}>
+          <div className="auth-form-container">
             <motion.h2
-              style={styles.formTitle}
+              className="auth-heading"
               initial={{ y: -20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.3 }}
@@ -135,7 +134,7 @@ const Auth = () => {
             </motion.h2>
 
             <motion.p
-              style={styles.formSubtitle}
+              className="auth-subheading"
               initial={{ y: -20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.4 }}
@@ -145,33 +144,27 @@ const Auth = () => {
 
             {/* Role Tabs */}
             <motion.div
-              style={styles.tabContainer}
+              className="auth-role-selector"
               initial={{ y: -20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.5 }}
             >
               <motion.button
-                style={{
-                  ...styles.tab,
-                  ...(userRole === "employer" ? styles.activeTab : {}),
-                }}
+                className={`auth-role-btn ${userRole === "employer" ? "auth-role-btn-active" : ""}`}
                 onClick={() => setUserRole("employer")}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <FiBriefcase style={styles.tabIcon} />
+                <FiBriefcase className="auth-role-icon" />
                 Employer
               </motion.button>
               <motion.button
-                style={{
-                  ...styles.tab,
-                  ...(userRole === "candidate" ? styles.activeTab : {}),
-                }}
+                className={`auth-role-btn ${userRole === "candidate" ? "auth-role-btn-active" : ""}`}
                 onClick={() => setUserRole("candidate")}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <FiUser style={styles.tabIcon} />
+                <FiUser className="auth-role-icon" />
                 Job Seeker
               </motion.button>
             </motion.div>
@@ -180,60 +173,58 @@ const Auth = () => {
             <AnimatePresence>
               {error && (
                 <motion.div
-                  style={styles.errorBox}
+                  className="auth-error-box"
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                 >
-                  <FiAlertCircle style={styles.errorIcon} />
+                  <FiAlertCircle className="auth-error-icon" />
                   {error}
                 </motion.div>
               )}
             </AnimatePresence>
 
             {/* Form */}
-            <form onSubmit={handleSubmit} style={styles.form}>
+            <form onSubmit={handleSubmit} className="auth-form">
               <motion.div
-                style={styles.inputGroup}
+                className="auth-input-group"
                 initial={{ x: -20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ duration: 0.4, delay: 0.6 }}
               >
-                <label style={styles.label}>Email Address</label>
-                <div style={styles.inputWrapper}>
-                  <FiMail style={styles.inputIcon} />
+                <label className="auth-label">Email Address</label>
+                <div className="auth-input-wrapper">
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    style={styles.input}
+                    className="auth-input"
                     placeholder="name@company.com"
                   />
                 </div>
               </motion.div>
 
               <motion.div
-                style={styles.inputGroup}
+                className="auth-input-group"
                 initial={{ x: -20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ duration: 0.4, delay: 0.7 }}
               >
-                <label style={styles.label}>Password</label>
-                <div style={styles.inputWrapper}>
-                  <FiLock style={styles.inputIcon} />
+                <label className="auth-label">Password</label>
+                <div className="auth-input-wrapper">
                   <input
                     type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    style={styles.input}
+                    className="auth-input"
                     placeholder="••••••••"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    style={styles.eyeButton}
+                    className="auth-eye-button"
                   >
                     {showPassword ? <FiEyeOff /> : <FiEye />}
                   </button>
@@ -243,10 +234,7 @@ const Auth = () => {
               <motion.button
                 type="submit"
                 disabled={loading}
-                style={{
-                  ...styles.submitBtn,
-                  ...(loading ? styles.submitBtnDisabled : {}),
-                }}
+                className={`auth-submit-btn ${loading ? "auth-submit-btn-disabled" : ""}`}
                 whileHover={!loading ? { scale: 1.02 } : {}}
                 whileTap={!loading ? { scale: 0.98 } : {}}
                 initial={{ y: 20, opacity: 0 }}
@@ -256,7 +244,7 @@ const Auth = () => {
                 {loading ? (
                   <>
                     <motion.div
-                      style={styles.spinner}
+                      className="auth-spinner"
                       animate={{ rotate: 360 }}
                       transition={{
                         duration: 1,
@@ -276,7 +264,7 @@ const Auth = () => {
 
             {/* Switch Auth Mode */}
             <motion.p
-              style={styles.switchText}
+              className="auth-switch-text"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.9 }}
@@ -289,7 +277,7 @@ const Auth = () => {
                   setIsLogin(!isLogin);
                   setError("");
                 }}
-                style={styles.switchLink}
+                className="auth-switch-link"
                 whileHover={{ scale: 1.05 }}
               >
                 {isLogin ? "Sign Up" : "Sign In"}
@@ -301,257 +289,5 @@ const Auth = () => {
     </div>
   );
 };
-
-const styles = {
-  container: {
-    minHeight: "100vh",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: "2rem 1rem",
-    background: "linear-gradient(135deg, #F9FAFB 0%, #EEF2FF 100%)",
-  },
-  wrapper: {
-    display: "grid",
-    gridTemplateColumns: "1fr 1fr",
-    maxWidth: "1100px",
-    width: "100%",
-    backgroundColor: "white",
-    borderRadius: "1.5rem",
-    overflow: "hidden",
-    boxShadow: "0 20px 60px rgba(0,0,0,0.1)",
-  },
-  brandingSide: {
-    background: "linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)",
-    padding: "4rem 3rem",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    color: "white",
-  },
-  brandingContent: {
-    maxWidth: "400px",
-  },
-  logoSection: {
-    textAlign: "center",
-    marginBottom: "3rem",
-  },
-  largeLogo: {
-    width: "80px",
-    height: "80px",
-    margin: "0 auto 1.5rem",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontSize: "2.5rem",
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
-    borderRadius: "1.5rem",
-    backdropFilter: "blur(10px)",
-  },
-  brandTitle: {
-    fontSize: "2.5rem",
-    fontWeight: "800",
-    marginBottom: "0.5rem",
-  },
-  brandSubtitle: {
-    fontSize: "1.125rem",
-    lineHeight: "1.7",
-    opacity: 0.95,
-    marginBottom: "3rem",
-  },
-  features: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "1.25rem",
-  },
-  featureItem: {
-    display: "flex",
-    alignItems: "center",
-    gap: "1rem",
-    fontSize: "1rem",
-  },
-  checkIcon: {
-    width: "24px",
-    height: "24px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
-    borderRadius: "50%",
-    fontWeight: "bold",
-  },
-  formSide: {
-    padding: "4rem 3rem",
-    display: "flex",
-    alignItems: "center",
-  },
-  formContainer: {
-    width: "100%",
-    maxWidth: "400px",
-    margin: "0 auto",
-  },
-  formTitle: {
-    fontSize: "2rem",
-    fontWeight: "800",
-    marginBottom: "0.5rem",
-    color: "#111827",
-  },
-  formSubtitle: {
-    fontSize: "1rem",
-    color: "#6B7280",
-    marginBottom: "2rem",
-  },
-  tabContainer: {
-    display: "grid",
-    gridTemplateColumns: "1fr 1fr",
-    gap: "0.75rem",
-    marginBottom: "2rem",
-    padding: "0.5rem",
-    backgroundColor: "#F3F4F6",
-    borderRadius: "0.75rem",
-  },
-  tab: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: "0.5rem",
-    padding: "0.75rem 1rem",
-    backgroundColor: "transparent",
-    border: "none",
-    borderRadius: "0.5rem",
-    fontSize: "0.95rem",
-    fontWeight: "600",
-    color: "#6B7280",
-    cursor: "pointer",
-    transition: "all 0.2s ease",
-  },
-  activeTab: {
-    backgroundColor: "white",
-    color: "#4F46E5",
-    boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
-  },
-  tabIcon: {
-    fontSize: "1.125rem",
-  },
-  errorBox: {
-    display: "flex",
-    alignItems: "center",
-    gap: "0.75rem",
-    padding: "1rem",
-    backgroundColor: "#FEE2E2",
-    color: "#DC2626",
-    borderRadius: "0.75rem",
-    fontSize: "0.875rem",
-    marginBottom: "1.5rem",
-    border: "1px solid #FCA5A5",
-  },
-  errorIcon: {
-    fontSize: "1.25rem",
-    flexShrink: 0,
-  },
-  form: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "1.5rem",
-  },
-  inputGroup: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "0.5rem",
-  },
-  label: {
-    fontSize: "0.875rem",
-    fontWeight: "600",
-    color: "#374151",
-  },
-  inputWrapper: {
-    position: "relative",
-    display: "flex",
-    alignItems: "center",
-  },
-  inputIcon: {
-    position: "absolute",
-    left: "1rem",
-    fontSize: "1.125rem",
-    color: "#9CA3AF",
-  },
-  input: {
-    width: "100%",
-    padding: "0.875rem 1rem 0.875rem 3rem",
-    border: "2px solid #E5E7EB",
-    borderRadius: "0.75rem",
-    fontSize: "1rem",
-    transition: "all 0.2s ease",
-    backgroundColor: "white",
-  },
-  eyeButton: {
-    position: "absolute",
-    right: "1rem",
-    padding: "0.5rem",
-    backgroundColor: "transparent",
-    border: "none",
-    color: "#9CA3AF",
-    cursor: "pointer",
-    fontSize: "1.125rem",
-    display: "flex",
-    alignItems: "center",
-  },
-  submitBtn: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: "0.5rem",
-    padding: "1rem",
-    fontSize: "1rem",
-    fontWeight: "600",
-    color: "white",
-    background: "linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)",
-    border: "none",
-    borderRadius: "0.75rem",
-    cursor: "pointer",
-    marginTop: "0.5rem",
-    boxShadow: "0 4px 12px rgba(79, 70, 229, 0.3)",
-    transition: "all 0.2s ease",
-  },
-  submitBtnDisabled: {
-    opacity: 0.7,
-    cursor: "not-allowed",
-  },
-  spinner: {
-    width: "20px",
-    height: "20px",
-    border: "3px solid rgba(255,255,255,0.3)",
-    borderTop: "3px solid white",
-    borderRadius: "50%",
-  },
-  switchText: {
-    textAlign: "center",
-    fontSize: "0.95rem",
-    color: "#6B7280",
-    marginTop: "1.5rem",
-  },
-  switchLink: {
-    color: "#4F46E5",
-    fontWeight: "600",
-    cursor: "pointer",
-    display: "inline-block",
-  },
-};
-
-// Responsive styles
-if (typeof window !== "undefined") {
-  const style = document.createElement("style");
-  style.textContent = `
-    @media (max-width: 968px) {
-      .wrapper {
-        grid-template-columns: 1fr !important;
-      }
-      .brandingSide {
-        display: none !important;
-      }
-    }
-  `;
-  document.head.appendChild(style);
-}
 
 export default Auth;
