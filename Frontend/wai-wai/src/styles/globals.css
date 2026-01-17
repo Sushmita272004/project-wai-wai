@@ -1,0 +1,192 @@
+/* Base resets and global utility classes */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+/* Modern CSS Reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+* {
+  margin: 0;
+}
+html,
+body,
+#root {
+  height: 100%;
+}
+body {
+  line-height: var(--leading-normal);
+  -webkit-font-smoothing: antialiased;
+}
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+/* Base Theme */
+html {
+  font-size: 16px;
+}
+body {
+  font-family: var(--font-sans);
+  color: var(--color-gray-900);
+  background: var(--color-gray-50);
+}
+
+/* Typography */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--color-gray-900);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+h1 {
+  font-size: clamp(2rem, 5vw, 3rem);
+  line-height: var(--leading-tight);
+}
+h2 {
+  font-size: clamp(1.5rem, 4vw, 2.25rem);
+  line-height: var(--leading-tight);
+}
+h3 {
+  font-size: clamp(1.25rem, 3vw, 1.875rem);
+  line-height: var(--leading-tight);
+}
+p {
+  color: var(--color-gray-700);
+  font-size: var(--text-md);
+}
+
+/* Links */
+a {
+  color: var(--color-primary-600);
+  text-decoration: none;
+}
+a:hover {
+  color: var(--color-primary-700);
+}
+
+/* Buttons (baseline styles; component styles refine) */
+button {
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+  background: var(--color-primary-500);
+  color: var(--color-white);
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+}
+button:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+}
+
+/* Form Fields */
+input,
+textarea,
+select {
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  background: var(--color-white);
+  color: var(--color-gray-900);
+}
+input::placeholder,
+textarea::placeholder {
+  color: var(--color-gray-400);
+}
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--color-primary-500);
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.12);
+  outline: none;
+}
+
+/* Containers */
+.container {
+  width: 100%;
+  max-width: var(--container-xl);
+  margin-inline: auto;
+  padding-inline: var(--space-6);
+}
+.container--narrow {
+  max-width: var(--container-lg);
+}
+
+/* Layout utilities */
+.grid {
+  display: grid;
+  gap: var(--space-6);
+}
+.flex {
+  display: flex;
+  gap: var(--space-4);
+}
+.stack {
+  display: grid;
+  gap: var(--space-4);
+}
+
+/* Card base */
+.card {
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-gray-100);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-gray-400);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gray-500);
+}
+
+/* Selection */
+::selection {
+  background: rgba(14, 165, 233, 0.2);
+  color: var(--color-gray-900);
+}
+
+/* Motion-safe override */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Breakpoints helpers */
+@media (max-width: 768px) {
+  .container {
+    padding-inline: var(--space-4);
+  }
+}

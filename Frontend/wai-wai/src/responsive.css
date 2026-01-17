@@ -1,126 +1,171 @@
-/* Responsive Styles for Mobile and Tablet Devices */
+/* Responsive Breakpoints */
 
-/* Mobile Menu Toggle */
+/* Tablet - 768px to 1023px */
+@media (max-width: 1023px) {
+  .section {
+    padding: 3rem 1.5rem;
+  }
+
+  .container {
+    padding: 0 1.5rem;
+  }
+
+  .grid-4,
+  .grid-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .card {
+    padding: 1.5rem;
+  }
+}
+
+/* Mobile - below 768px */
 @media (max-width: 768px) {
-  /* Hide desktop links and show mobile menu button */
-  nav > div > div:nth-child(2) {
-    display: none !important;
+  .section {
+    padding: 2rem 1rem;
   }
 
-  /* Auth Page - Single Column Layout */
-  .auth-wrapper {
-    grid-template-columns: 1fr !important;
+  .container {
+    padding: 0 1rem;
   }
 
-  .auth-branding-side {
-    display: none !important;
+  /* Collapse all grids to single column */
+  .grid-4,
+  .grid-3,
+  .grid-2 {
+    grid-template-columns: 1fr;
   }
 
-  .auth-form-side {
-    padding: 2rem 1.5rem !important;
+  .card {
+    padding: 1.25rem;
   }
 
-  /* Home Page Adjustments */
-  .hero-stats {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 1rem !important;
+  /* Typography adjustments */
+  h1 {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
   }
 
-  .features-grid {
-    grid-template-columns: 1fr !important;
+  h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
   }
 
-  /* Job Generator Adjustments */
-  .job-generator-card {
-    padding: 1.5rem !important;
+  h3 {
+    font-size: 1.25rem;
   }
 
-  .radio-group {
-    grid-template-columns: 1fr !important;
+  /* Form inputs - 16px minimum to prevent iOS zoom */
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+    padding: 0.75rem 1rem;
   }
 
-  .action-buttons {
-    flex-direction: column !important;
+  button {
+    padding: 0.75rem 1.25rem;
   }
 
-  .action-buttons button {
-    width: 100% !important;
-  }
-
-  .result-header {
-    flex-direction: column !important;
-    align-items: flex-start !important;
-  }
-
-  /* Footer Adjustments */
-  footer .top-section {
-    grid-template-columns: 1fr !important;
-    gap: 2rem !important;
-  }
-
-  footer .bottom-section {
-    flex-direction: column !important;
-    text-align: center !important;
-  }
-}
-
-/* Tablet Adjustments */
-@media (min-width: 769px) and (max-width: 1024px) {
-  .features-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-
-  footer .top-section {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-}
-
-/* Small Mobile Devices */
-@media (max-width: 480px) {
-  .hero-stats {
-    grid-template-columns: 1fr !important;
-  }
-
+  /* Button groups stack vertically */
   .button-group {
-    flex-direction: column !important;
-    width: 100% !important;
+    flex-direction: column;
+    width: 100%;
   }
 
   .button-group button,
   .button-group a {
-    width: 100% !important;
-  }
-
-  .progress-bar {
-    padding: 0 0.5rem !important;
-  }
-
-  .tab-container {
-    gap: 0.5rem !important;
-    padding: 0.25rem !important;
+    width: 100%;
   }
 }
 
-/* Ensure inputs and textareas are responsive */
-@media (max-width: 768px) {
+/* Small Mobile - below 480px */
+@media (max-width: 480px) {
+  .section {
+    padding: 1.5rem 1rem;
+  }
+
+  .card {
+    padding: 1rem;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  h2 {
+    font-size: 1.25rem;
+  }
+
   input,
   textarea,
   select {
-    font-size: 16px !important; /* Prevents zoom on iOS */
+    padding: 0.7rem 0.875rem;
+  }
+
+  button {
+    padding: 0.7rem 1rem;
+    font-size: 0.9rem;
   }
 }
 
-/* Print Styles for PDF Export */
+/* Touch Device Optimizations */
+@media (hover: none) and (pointer: coarse) {
+  /* Ensure touch targets are at least 44x44px */
+  button,
+  a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Add active state feedback */
+  button:active {
+    transform: scale(0.98);
+  }
+}
+
+/* iOS Safari Fixes */
+@supports (-webkit-touch-callout: none) {
+  /* Prevent zoom on input focus */
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+  }
+}
+
+/* Landscape Mode on Small Devices */
+@media (max-height: 500px) and (orientation: landscape) {
+  .section {
+    padding: 1.5rem 1rem;
+  }
+}
+
+/* Print Styles */
 @media print {
   nav,
   footer,
-  .action-buttons,
-  .navigation {
-    display: none !important;
+  .action-buttons {
+    display: none;
   }
 
-  .result-textarea {
-    border: none !important;
-    font-family: "Times New Roman", serif !important;
+  body {
+    background: white;
+  }
+
+  .section {
+    page-break-inside: avoid;
+  }
+}
+
+/* Accessibility - Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
