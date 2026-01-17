@@ -3,7 +3,8 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import JobDashboard from "./pages/JobDashboard"; // <-- NEW: Imported Dashboard
+import Home from "./pages/Home";
+import JobDashboard from "./pages/JobDashboard";
 import JobGenerator from "./pages/JobGenerator";
 import ResumeParser from "./pages/ResumeParser";
 import Analytics from "./pages/Analytics";
@@ -26,10 +27,20 @@ function App() {
           <Navbar />
           <main style={{ flex: 1, width: "100%" }}>
             <Routes>
-              {/* LANDING PAGE: Now shows the Job Discovery Dashboard */}
-              <Route path="/" element={<JobDashboard />} />
+              {/* LANDING PAGE: Home with all features showcase */}
+              <Route path="/" element={<Home />} />
 
               <Route path="/auth" element={<Auth />} />
+
+              {/* Job Dashboard: Requires Login */}
+              <Route
+                path="/jobs"
+                element={
+                  <ProtectedRoute>
+                    <JobDashboard />
+                  </ProtectedRoute>
+                }
+              />
 
               {/* Job Generator: Restricted to Employers */}
               <Route

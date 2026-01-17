@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { jsPDF } from "jspdf";
 import { motion, AnimatePresence } from "framer-motion";
+import "../styles/JobGenerator.css";
 import {
   FiChevronRight,
   FiChevronLeft,
@@ -128,26 +129,26 @@ const JobGenerator = () => {
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.wrapper}>
+    <div className="job-generator-container">
+      <div className="job-generator-wrapper">
         {/* Header */}
         <motion.div
-          style={styles.header}
+          className="job-generator-header"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <div style={styles.headerContent}>
-            <div style={styles.iconWrapper}>
-              <FiZap style={styles.headerIcon} />
+          <div className="job-generator-header-content">
+            <div className="job-generator-icon-wrapper">
+              <FiZap className="job-generator-header-icon" />
             </div>
             <div>
-              <h1 style={styles.title}>
+              <h1 className="job-generator-title">
                 {step === 4
                   ? "Your AI-Generated Job Description"
                   : "AI Job Description Generator"}
               </h1>
-              <p style={styles.subtitle}>
+              <p className="job-generator-subtitle">
                 {step === 4
                   ? "Review and customize your job description"
                   : `Step ${step} of 3 - ${["Basic Information", "Skills & Requirements", "Company Culture"][step - 1]}`}
@@ -159,29 +160,28 @@ const JobGenerator = () => {
         {/* Progress Bar */}
         {step < 4 && (
           <motion.div
-            style={styles.progressSection}
+            className="job-generator-progress-section"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <div style={styles.progressBar}>
+            <div className="job-generator-progress-bar">
               {[1, 2, 3].map((num) => (
                 <React.Fragment key={num}>
                   <motion.div
-                    style={{
-                      ...styles.progressDot,
-                      ...(step >= num ? styles.progressDotActive : {}),
-                    }}
+                    className={`job-generator-progress-dot ${
+                      step >= num ? "job-generator-progress-dot-active" : ""
+                    }`}
                     initial={{ scale: 0.8 }}
                     animate={{ scale: step >= num ? 1 : 0.8 }}
                   >
                     {step > num ? <FiCheck /> : num}
                   </motion.div>
                   {num < 3 && (
-                    <div style={styles.progressLineWrapper}>
-                      <div style={styles.progressLine}>
+                    <div className="job-generator-progress-line-wrapper">
+                      <div className="job-generator-progress-line">
                         <motion.div
-                          style={styles.progressLineFill}
+                          className="job-generator-progress-line-fill"
                           initial={{ width: "0%" }}
                           animate={{ width: step > num ? "100%" : "0%" }}
                           transition={{ duration: 0.5 }}
@@ -197,7 +197,7 @@ const JobGenerator = () => {
 
         {/* Form Card */}
         <motion.div
-          style={styles.card}
+          className="job-generator-card"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
@@ -212,13 +212,15 @@ const JobGenerator = () => {
                 animate="visible"
                 exit="exit"
                 transition={{ duration: 0.3 }}
-                style={styles.formContent}
+                className="job-generator-form-content"
               >
-                <h3 style={styles.stepTitle}>Let's start with the basics</h3>
+                <h3 className="job-generator-step-title">
+                  Let's start with the basics
+                </h3>
 
-                <div style={styles.inputGroup}>
-                  <label style={styles.label}>
-                    Job Title <span style={styles.required}>*</span>
+                <div className="job-generator-input-group">
+                  <label className="job-generator-label">
+                    Job Title <span className="job-generator-required">*</span>
                   </label>
                   <input
                     type="text"
@@ -226,17 +228,19 @@ const JobGenerator = () => {
                     value={formData.jobTitle}
                     onChange={handleChange}
                     placeholder="e.g., Senior Backend Engineer"
-                    style={styles.input}
+                    className="job-generator-input"
                   />
                 </div>
 
-                <div style={styles.inputGroup}>
-                  <label style={styles.label}>Industry / Domain</label>
+                <div className="job-generator-input-group">
+                  <label className="job-generator-label">
+                    Industry / Domain
+                  </label>
                   <select
                     name="industry"
                     value={formData.industry}
                     onChange={handleChange}
-                    style={styles.select}
+                    className="job-generator-select"
                   >
                     {industries.map((industry) => (
                       <option key={industry} value={industry}>
@@ -246,18 +250,19 @@ const JobGenerator = () => {
                   </select>
                 </div>
 
-                <div style={styles.inputGroup}>
-                  <label style={styles.label}>Experience Level</label>
-                  <div style={styles.radioGroup}>
+                <div className="job-generator-input-group">
+                  <label className="job-generator-label">
+                    Experience Level
+                  </label>
+                  <div className="job-generator-radio-group">
                     {["Entry-Level", "Mid-Level", "Senior"].map((level) => (
                       <motion.label
                         key={level}
-                        style={{
-                          ...styles.radioLabel,
-                          ...(formData.experienceLevel === level
-                            ? styles.radioLabelActive
-                            : {}),
-                        }}
+                        className={`job-generator-radio-label ${
+                          formData.experienceLevel === level
+                            ? "job-generator-radio-label-active"
+                            : ""
+                        }`}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                       >
@@ -267,7 +272,7 @@ const JobGenerator = () => {
                           value={level}
                           checked={formData.experienceLevel === level}
                           onChange={handleChange}
-                          style={styles.radioInput}
+                          className="job-generator-radio-input"
                         />
                         {level}
                       </motion.label>
@@ -286,15 +291,15 @@ const JobGenerator = () => {
                 animate="visible"
                 exit="exit"
                 transition={{ duration: 0.3 }}
-                style={styles.formContent}
+                className="job-generator-form-content"
               >
-                <h3 style={styles.stepTitle}>
+                <h3 className="job-generator-step-title">
                   What skills are you looking for?
                 </h3>
 
-                <div style={styles.inputGroup}>
-                  <label style={styles.label}>
-                    Key Skills <span style={styles.required}>*</span>
+                <div className="job-generator-input-group">
+                  <label className="job-generator-label">
+                    Key Skills <span className="job-generator-required">*</span>
                   </label>
                   <input
                     type="text"
@@ -302,13 +307,15 @@ const JobGenerator = () => {
                     value={formData.skills}
                     onChange={handleChange}
                     placeholder="e.g., Python, React, AWS, Machine Learning"
-                    style={styles.input}
+                    className="job-generator-input"
                   />
-                  <p style={styles.hint}>Separate skills with commas</p>
+                  <p className="job-generator-hint">
+                    Separate skills with commas
+                  </p>
                 </div>
 
-                <div style={styles.inputGroup}>
-                  <label style={styles.label}>
+                <div className="job-generator-input-group">
+                  <label className="job-generator-label">
                     Special Requirements (Optional)
                   </label>
                   <textarea
@@ -316,7 +323,7 @@ const JobGenerator = () => {
                     value={formData.specialRequirements}
                     onChange={handleChange}
                     placeholder="e.g., Willing to travel, Remote work available, Security clearance required"
-                    style={styles.textarea}
+                    className="job-generator-textarea"
                     rows="4"
                   />
                 </div>
@@ -332,24 +339,23 @@ const JobGenerator = () => {
                 animate="visible"
                 exit="exit"
                 transition={{ duration: 0.3 }}
-                style={styles.formContent}
+                className="job-generator-form-content"
               >
-                <h3 style={styles.stepTitle}>
+                <h3 className="job-generator-step-title">
                   Tell us about your company culture
                 </h3>
 
-                <div style={styles.inputGroup}>
-                  <label style={styles.label}>Culture Type</label>
-                  <div style={styles.radioGroup}>
+                <div className="job-generator-input-group">
+                  <label className="job-generator-label">Culture Type</label>
+                  <div className="job-generator-radio-group">
                     {["Startup", "Corporate", "Remote-first"].map((culture) => (
                       <motion.label
                         key={culture}
-                        style={{
-                          ...styles.radioLabel,
-                          ...(formData.culture === culture
-                            ? styles.radioLabelActive
-                            : {}),
-                        }}
+                        className={`job-generator-radio-label ${
+                          formData.culture === culture
+                            ? "job-generator-radio-label-active"
+                            : ""
+                        }`}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                       >
@@ -359,7 +365,7 @@ const JobGenerator = () => {
                           value={culture}
                           checked={formData.culture === culture}
                           onChange={handleChange}
-                          style={styles.radioInput}
+                          className="job-generator-radio-input"
                         />
                         {culture === "Startup" && "🚀 "}
                         {culture === "Corporate" && "🏢 "}
@@ -371,15 +377,17 @@ const JobGenerator = () => {
                 </div>
 
                 <motion.div
-                  style={styles.summaryBox}
+                  className="job-generator-summary-box"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
                 >
-                  <FiCheckCircle style={styles.summaryIcon} />
+                  <FiCheckCircle className="job-generator-summary-icon" />
                   <div>
-                    <h4 style={styles.summaryTitle}>Ready to Generate!</h4>
-                    <p style={styles.summaryText}>
+                    <h4 className="job-generator-summary-title">
+                      Ready to Generate!
+                    </h4>
+                    <p className="job-generator-summary-text">
                       We'll create a {formData.culture.toLowerCase()} job
                       description for a{" "}
                       <strong>
@@ -401,21 +409,21 @@ const JobGenerator = () => {
                 animate="visible"
                 exit="exit"
                 transition={{ duration: 0.3 }}
-                style={styles.formContent}
+                className="job-generator-form-content"
               >
-                <div style={styles.resultHeader}>
-                  <div style={styles.resultInfo}>
-                    <FiCheckCircle style={styles.successIcon} />
-                    <span style={styles.resultText}>
+                <div className="job-generator-result-header">
+                  <div className="job-generator-result-info">
+                    <FiCheckCircle className="job-generator-success-icon" />
+                    <span className="job-generator-result-text">
                       Generated Successfully!
                     </span>
                   </div>
-                  <div style={styles.actionButtons}>
+                  <div className="job-generator-action-buttons">
                     <motion.button
                       onClick={copyToClipboard}
-                      style={
-                        copied ? styles.actionBtnSuccess : styles.actionBtn
-                      }
+                      className={`job-generator-action-btn ${
+                        copied ? "job-generator-action-btn-success" : ""
+                      }`}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >
@@ -431,7 +439,7 @@ const JobGenerator = () => {
                     </motion.button>
                     <motion.button
                       onClick={downloadPDF}
-                      style={styles.actionBtn}
+                      className="job-generator-action-btn"
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >
@@ -439,7 +447,7 @@ const JobGenerator = () => {
                     </motion.button>
                     <motion.button
                       onClick={saveDraft}
-                      style={styles.actionBtn}
+                      className="job-generator-action-btn"
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >
@@ -451,12 +459,12 @@ const JobGenerator = () => {
                 <textarea
                   value={generatedJob}
                   onChange={handleJobEdit}
-                  style={styles.resultTextarea}
+                  className="job-generator-result-textarea"
                 />
 
                 <motion.button
                   onClick={() => setStep(1)}
-                  style={styles.startOverBtn}
+                  className="job-generator-start-over-btn"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
@@ -469,7 +477,7 @@ const JobGenerator = () => {
           {/* Navigation Buttons */}
           {step < 4 && (
             <motion.div
-              style={styles.navigation}
+              className="job-generator-navigation"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
@@ -477,7 +485,7 @@ const JobGenerator = () => {
               {step > 1 && (
                 <motion.button
                   onClick={prevStep}
-                  style={styles.backBtn}
+                  className="job-generator-back-btn"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
@@ -488,12 +496,11 @@ const JobGenerator = () => {
               {step < 3 ? (
                 <motion.button
                   onClick={nextStep}
-                  style={{
-                    ...styles.nextBtn,
-                    ...(step === 1 && !formData.jobTitle
-                      ? styles.btnDisabled
-                      : {}),
-                  }}
+                  className={`job-generator-next-btn ${
+                    step === 1 && !formData.jobTitle
+                      ? "job-generator-btn-disabled"
+                      : ""
+                  }`}
                   disabled={step === 1 && !formData.jobTitle}
                   whileHover={formData.jobTitle ? { scale: 1.02 } : {}}
                   whileTap={formData.jobTitle ? { scale: 0.98 } : {}}
@@ -503,10 +510,9 @@ const JobGenerator = () => {
               ) : (
                 <motion.button
                   onClick={handleGenerate}
-                  style={{
-                    ...styles.generateBtn,
-                    ...(loading ? styles.btnDisabled : {}),
-                  }}
+                  className={`job-generator-generate-btn ${
+                    loading ? "job-generator-btn-disabled" : ""
+                  }`}
                   disabled={loading}
                   whileHover={
                     !loading
@@ -521,7 +527,7 @@ const JobGenerator = () => {
                   {loading ? (
                     <>
                       <motion.div
-                        style={styles.spinner}
+                        className="job-generator-spinner"
                         animate={{ rotate: 360 }}
                         transition={{
                           duration: 1,
@@ -544,354 +550,6 @@ const JobGenerator = () => {
       </div>
     </div>
   );
-};
-
-const styles = {
-  container: {
-    minHeight: "100vh",
-    padding: "2rem 1rem",
-    background: "linear-gradient(135deg, #F9FAFB 0%, #EEF2FF 100%)",
-  },
-  wrapper: {
-    maxWidth: "900px",
-    margin: "0 auto",
-  },
-  header: {
-    marginBottom: "2rem",
-  },
-  headerContent: {
-    display: "flex",
-    alignItems: "center",
-    gap: "1.5rem",
-  },
-  iconWrapper: {
-    width: "60px",
-    height: "60px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    background: "linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)",
-    borderRadius: "1rem",
-    boxShadow: "0 8px 20px rgba(79, 70, 229, 0.3)",
-  },
-  headerIcon: {
-    fontSize: "2rem",
-    color: "white",
-  },
-  title: {
-    fontSize: "clamp(1.5rem, 3vw, 2.25rem)",
-    fontWeight: "800",
-    marginBottom: "0.5rem",
-    color: "#111827",
-  },
-  subtitle: {
-    fontSize: "1rem",
-    color: "#6B7280",
-    fontWeight: "500",
-  },
-  progressSection: {
-    marginBottom: "2rem",
-  },
-  progressBar: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: "0",
-  },
-  progressDot: {
-    width: "48px",
-    height: "48px",
-    borderRadius: "50%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontSize: "1.125rem",
-    fontWeight: "700",
-    backgroundColor: "white",
-    color: "#9CA3AF",
-    border: "3px solid #E5E7EB",
-    zIndex: 2,
-    transition: "all 0.3s ease",
-  },
-  progressDotActive: {
-    background: "linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)",
-    color: "white",
-    border: "3px solid #4F46E5",
-    boxShadow: "0 4px 12px rgba(79, 70, 229, 0.3)",
-  },
-  progressLineWrapper: {
-    flex: 1,
-    padding: "0 0.5rem",
-  },
-  progressLine: {
-    height: "4px",
-    backgroundColor: "#E5E7EB",
-    borderRadius: "2px",
-    overflow: "hidden",
-  },
-  progressLineFill: {
-    height: "100%",
-    background: "linear-gradient(90deg, #4F46E5 0%, #7C3AED 100%)",
-  },
-  card: {
-    backgroundColor: "white",
-    borderRadius: "1.5rem",
-    padding: "3rem",
-    boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
-  },
-  formContent: {
-    minHeight: "350px",
-  },
-  stepTitle: {
-    fontSize: "1.5rem",
-    fontWeight: "700",
-    marginBottom: "2rem",
-    color: "#111827",
-  },
-  inputGroup: {
-    marginBottom: "1.75rem",
-  },
-  label: {
-    display: "block",
-    fontSize: "0.95rem",
-    fontWeight: "600",
-    color: "#374151",
-    marginBottom: "0.5rem",
-  },
-  required: {
-    color: "#EF4444",
-  },
-  input: {
-    width: "100%",
-    padding: "0.875rem 1.125rem",
-    fontSize: "1rem",
-    border: "2px solid #E5E7EB",
-    borderRadius: "0.75rem",
-    transition: "all 0.2s ease",
-    backgroundColor: "white",
-  },
-  select: {
-    width: "100%",
-    padding: "0.875rem 1.125rem",
-    fontSize: "1rem",
-    border: "2px solid #E5E7EB",
-    borderRadius: "0.75rem",
-    transition: "all 0.2s ease",
-    backgroundColor: "white",
-    cursor: "pointer",
-  },
-  textarea: {
-    width: "100%",
-    padding: "0.875rem 1.125rem",
-    fontSize: "1rem",
-    border: "2px solid #E5E7EB",
-    borderRadius: "0.75rem",
-    transition: "all 0.2s ease",
-    backgroundColor: "white",
-    resize: "vertical",
-    fontFamily: "inherit",
-  },
-  hint: {
-    fontSize: "0.875rem",
-    color: "#9CA3AF",
-    marginTop: "0.5rem",
-  },
-  radioGroup: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
-    gap: "0.75rem",
-  },
-  radioLabel: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: "0.875rem 1rem",
-    border: "2px solid #E5E7EB",
-    borderRadius: "0.75rem",
-    cursor: "pointer",
-    fontSize: "0.95rem",
-    fontWeight: "600",
-    color: "#6B7280",
-    transition: "all 0.2s ease",
-    backgroundColor: "white",
-  },
-  radioLabelActive: {
-    border: "2px solid #4F46E5",
-    backgroundColor: "#EEF2FF",
-    color: "#4F46E5",
-  },
-  radioInput: {
-    display: "none",
-  },
-  summaryBox: {
-    display: "flex",
-    gap: "1rem",
-    padding: "1.5rem",
-    backgroundColor: "#ECFDF5",
-    border: "2px solid #10B981",
-    borderRadius: "1rem",
-    marginTop: "2rem",
-  },
-  summaryIcon: {
-    fontSize: "1.75rem",
-    color: "#10B981",
-    flexShrink: 0,
-  },
-  summaryTitle: {
-    fontSize: "1.125rem",
-    fontWeight: "700",
-    color: "#065F46",
-    marginBottom: "0.5rem",
-  },
-  summaryText: {
-    fontSize: "0.95rem",
-    color: "#047857",
-    lineHeight: "1.6",
-  },
-  resultHeader: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: "1.5rem",
-    flexWrap: "wrap",
-    gap: "1rem",
-  },
-  resultInfo: {
-    display: "flex",
-    alignItems: "center",
-    gap: "0.75rem",
-  },
-  successIcon: {
-    fontSize: "1.5rem",
-    color: "#10B981",
-  },
-  resultText: {
-    fontSize: "1.125rem",
-    fontWeight: "600",
-    color: "#065F46",
-  },
-  actionButtons: {
-    display: "flex",
-    gap: "0.5rem",
-    flexWrap: "wrap",
-  },
-  actionBtn: {
-    display: "flex",
-    alignItems: "center",
-    gap: "0.5rem",
-    padding: "0.625rem 1rem",
-    fontSize: "0.875rem",
-    fontWeight: "600",
-    color: "#4F46E5",
-    backgroundColor: "#EEF2FF",
-    border: "none",
-    borderRadius: "0.5rem",
-    cursor: "pointer",
-    transition: "all 0.2s ease",
-  },
-  actionBtnSuccess: {
-    display: "flex",
-    alignItems: "center",
-    gap: "0.5rem",
-    padding: "0.625rem 1rem",
-    fontSize: "0.875rem",
-    fontWeight: "600",
-    color: "white",
-    backgroundColor: "#10B981",
-    border: "none",
-    borderRadius: "0.5rem",
-    cursor: "pointer",
-  },
-  resultTextarea: {
-    width: "100%",
-    minHeight: "400px",
-    padding: "1.25rem",
-    fontSize: "0.95rem",
-    border: "2px solid #E5E7EB",
-    borderRadius: "0.75rem",
-    fontFamily: "monospace",
-    lineHeight: "1.7",
-    resize: "vertical",
-    marginBottom: "1.5rem",
-  },
-  startOverBtn: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: "0.75rem",
-    width: "100%",
-    padding: "1rem",
-    fontSize: "1rem",
-    fontWeight: "600",
-    color: "#6B7280",
-    backgroundColor: "#F3F4F6",
-    border: "2px solid #E5E7EB",
-    borderRadius: "0.75rem",
-    cursor: "pointer",
-    transition: "all 0.2s ease",
-  },
-  navigation: {
-    display: "flex",
-    justifyContent: "space-between",
-    marginTop: "2.5rem",
-    gap: "1rem",
-  },
-  backBtn: {
-    display: "flex",
-    alignItems: "center",
-    gap: "0.5rem",
-    padding: "0.875rem 1.5rem",
-    fontSize: "1rem",
-    fontWeight: "600",
-    color: "#6B7280",
-    backgroundColor: "#F3F4F6",
-    border: "none",
-    borderRadius: "0.75rem",
-    cursor: "pointer",
-    transition: "all 0.2s ease",
-  },
-  nextBtn: {
-    display: "flex",
-    alignItems: "center",
-    gap: "0.5rem",
-    padding: "0.875rem 1.5rem",
-    fontSize: "1rem",
-    fontWeight: "600",
-    color: "white",
-    background: "linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)",
-    border: "none",
-    borderRadius: "0.75rem",
-    cursor: "pointer",
-    marginLeft: "auto",
-    boxShadow: "0 4px 12px rgba(79, 70, 229, 0.3)",
-  },
-  generateBtn: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: "0.75rem",
-    padding: "0.875rem 1.5rem",
-    fontSize: "1rem",
-    fontWeight: "600",
-    color: "white",
-    background: "linear-gradient(135deg, #10B981 0%, #059669 100%)",
-    border: "none",
-    borderRadius: "0.75rem",
-    cursor: "pointer",
-    marginLeft: "auto",
-    boxShadow: "0 4px 12px rgba(16, 185, 129, 0.3)",
-  },
-  btnDisabled: {
-    opacity: 0.6,
-    cursor: "not-allowed",
-  },
-  spinner: {
-    width: "20px",
-    height: "20px",
-    border: "3px solid rgba(255,255,255,0.3)",
-    borderTop: "3px solid white",
-    borderRadius: "50%",
-  },
 };
 
 export default JobGenerator;

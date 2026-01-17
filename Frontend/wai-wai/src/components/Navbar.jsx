@@ -12,6 +12,7 @@ import {
   FiX,
   FiBarChart2,
 } from "react-icons/fi";
+import "../styles/Navbar.css";
 
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -43,6 +44,15 @@ const Navbar = () => {
 
   const navLinks = [
     { path: "/", label: "Home", icon: <FiHome /> },
+    ...(user?.user_metadata?.role === "candidate"
+      ? [
+          {
+            path: "/jobs",
+            label: "Job Discovery",
+            icon: <FiBriefcase />,
+          },
+        ]
+      : []),
     ...(user?.user_metadata?.role === "employer"
       ? [
           {
@@ -71,31 +81,28 @@ const Navbar = () => {
 
   return (
     <motion.nav
-      style={{
-        ...styles.nav,
-        ...(scrolled ? styles.navScrolled : {}),
-      }}
+      className={`${scrolled ? "scrolled" : ""}`}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <div style={styles.container}>
+      <div className="navbar-container">
         {/* Logo */}
-        <Link to="/" style={styles.logoLink}>
+        <Link to="/" className="logo-link">
           <motion.div
-            style={styles.logo}
+            className="logo"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <div style={styles.logoIcon}>
+            <div className="logo-icon">
               <FiBriefcase />
             </div>
-            <span style={styles.logoText}>Wevolve AI</span>
+            <span className="logo-text">Wevolve AI</span>
           </motion.div>
         </Link>
 
         {/* Desktop Links */}
-        <div style={styles.desktopLinks}>
+        <div className="desktop-links">
           {navLinks.map((link) => (
             <Link
               key={link.path}
@@ -103,9 +110,7 @@ const Navbar = () => {
               style={{ textDecoration: "none" }}
             >
               <div
-                style={
-                  isActive(link.path) ? styles.navLinkActive : styles.navLink
-                }
+                className={`nav-link ${isActive(link.path) ? "active" : ""}`}
               >
                 {link.label}
               </div>
@@ -114,13 +119,13 @@ const Navbar = () => {
         </div>
 
         {/* User Actions (Desktop) */}
-        <div style={styles.desktopActions}>
+        <div className="desktop-actions">
           {user ? (
-            <button onClick={handleLogout} style={styles.ctaButton}>
+            <button onClick={handleLogout} className="cta-button">
               Logout
             </button>
           ) : (
-            <Link to="/auth" style={styles.ctaButton}>
+            <Link to="/auth" className="cta-button">
               Login
             </Link>
           )}
@@ -128,7 +133,7 @@ const Navbar = () => {
 
         {/* Mobile Menu Toggle Button */}
         <button
-          style={styles.mobileMenuBtn}
+          className="mobile-menu-btn"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         >
           {mobileMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
@@ -139,7 +144,7 @@ const Navbar = () => {
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
-            style={styles.mobileMenu}
+            className="mobile-menu"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
@@ -153,15 +158,14 @@ const Navbar = () => {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <motion.div
-                  style={{
-                    ...styles.mobileNavLink,
-                    ...(isActive(link.path) ? styles.mobileNavLinkActive : {}),
-                  }}
+                  className={`mobile-nav-link ${
+                    isActive(link.path) ? "active" : ""
+                  }`}
                   initial={{ x: -20, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ delay: index * 0.1 }}
                 >
-                  <span style={styles.navIcon}>{link.icon}</span>
+                  <span className="nav-icon">{link.icon}</span>
                   {link.label}
                 </motion.div>
               </Link>
@@ -169,18 +173,18 @@ const Navbar = () => {
 
             {user ? (
               <>
-                <div style={styles.mobileUserInfo}>
-                  <FiUser style={styles.userIcon} />
+                <div className="mobile-user-info">
+                  <FiUser className="user-icon" />
                   <span>{user.email}</span>
                 </div>
                 <motion.button
                   onClick={handleLogout}
-                  style={styles.mobileLogoutBtn}
+                  className="mobile-logout-btn"
                   initial={{ x: -20, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ delay: navLinks.length * 0.1 }}
                 >
-                  <FiLogOut style={styles.btnIcon} />
+                  <FiLogOut className="btn-icon" />
                   Logout
                 </motion.button>
               </>
@@ -191,7 +195,7 @@ const Navbar = () => {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <motion.button
-                  style={styles.mobileCtaButton}
+                  className="mobile-cta-button"
                   initial={{ x: -20, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ delay: navLinks.length * 0.1 }}
@@ -206,174 +210,5 @@ const Navbar = () => {
     </motion.nav>
   );
 };
-
-const styles = {
-  nav: {
-    position: "sticky",
-    top: 0,
-    zIndex: 1000,
-    backgroundColor: "rgba(255, 255, 255, 0.8)",
-    backdropFilter: "blur(12px)",
-    WebkitBackdropFilter: "blur(12px)",
-    boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
-    transition: "all 0.3s ease",
-  },
-  navScrolled: {
-    backgroundColor: "rgba(255, 255, 255, 0.95)",
-    boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-  },
-  container: {
-    maxWidth: "1280px",
-    margin: "0 auto",
-    padding: "1rem 1.5rem",
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  logoLink: { textDecoration: "none" },
-  logo: {
-    display: "flex",
-    alignItems: "center",
-    gap: "0.75rem",
-    cursor: "pointer",
-  },
-  logoIcon: {
-    width: "40px",
-    height: "40px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontSize: "1.5rem",
-    color: "white",
-    background: "linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)",
-    borderRadius: "0.75rem",
-  },
-  logoText: {
-    fontSize: "1.5rem",
-    fontWeight: "800",
-    background: "linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)",
-    WebkitBackgroundClip: "text",
-    WebkitTextFillColor: "transparent",
-    backgroundClip: "text",
-  },
-
-  // Desktop Links
-  desktopLinks: { display: "flex", alignItems: "center", gap: "2rem" },
-  navLink: {
-    padding: "0.5rem 1rem",
-    fontSize: "1rem",
-    fontWeight: "600",
-    color: "#6B7280",
-    cursor: "pointer",
-  },
-  navLinkActive: {
-    padding: "0.5rem 1rem",
-    fontSize: "1rem",
-    fontWeight: "600",
-    color: "#4F46E5",
-    backgroundColor: "#EEF2FF",
-    borderRadius: "0.5rem",
-  },
-
-  desktopActions: { display: "flex", alignItems: "center" },
-  ctaButton: {
-    padding: "0.75rem 1.5rem",
-    fontSize: "1rem",
-    fontWeight: "600",
-    color: "white",
-    background: "linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)",
-    border: "none",
-    borderRadius: "0.75rem",
-    cursor: "pointer",
-    textDecoration: "none",
-  },
-
-  // Mobile Button
-  mobileMenuBtn: {
-    display: "none",
-    background: "none",
-    border: "none",
-    cursor: "pointer",
-    color: "#4F46E5",
-  },
-
-  // Mobile Menu Styles
-  mobileMenu: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "0.5rem",
-    padding: "1rem 1.5rem",
-    backgroundColor: "white",
-    borderTop: "1px solid #E5E7EB",
-    overflow: "hidden",
-  },
-  mobileNavLink: {
-    display: "flex",
-    alignItems: "center",
-    gap: "0.75rem",
-    padding: "0.75rem 1rem",
-    fontSize: "1rem",
-    fontWeight: "600",
-    color: "#6B7280",
-    borderRadius: "0.5rem",
-  },
-  mobileNavLinkActive: { color: "#4F46E5", backgroundColor: "#EEF2FF" },
-  mobileUserInfo: {
-    display: "flex",
-    alignItems: "center",
-    gap: "0.5rem",
-    padding: "0.75rem 1rem",
-    backgroundColor: "#F9FAFB",
-    borderRadius: "0.5rem",
-    fontSize: "0.875rem",
-    color: "#6B7280",
-    marginTop: "0.5rem",
-  },
-  mobileLogoutBtn: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: "0.5rem",
-    padding: "0.75rem 1rem",
-    fontSize: "1rem",
-    fontWeight: "600",
-    color: "#DC2626",
-    backgroundColor: "#FEE2E2",
-    border: "none",
-    borderRadius: "0.5rem",
-    cursor: "pointer",
-    width: "100%",
-  },
-  mobileCtaButton: {
-    padding: "0.75rem 1.5rem",
-    fontSize: "1rem",
-    fontWeight: "600",
-    color: "white",
-    background: "linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)",
-    border: "none",
-    borderRadius: "0.5rem",
-    cursor: "pointer",
-    width: "100%",
-  },
-};
-
-// Inject Media Queries via JS (Simple method)
-if (typeof window !== "undefined") {
-  const style = document.createElement("style");
-  style.textContent = `
-    @media (max-width: 768px) {
-      /* Hide Desktop Elements */
-      nav > div > div:nth-child(2),
-      nav > div > div:nth-child(3) {
-        display: none !important;
-      }
-      /* Show Mobile Toggle */
-      nav button[style*="mobileMenuBtn"] {
-        display: block !important;
-      }
-    }
-  `;
-  document.head.appendChild(style);
-}
 
 export default Navbar;
