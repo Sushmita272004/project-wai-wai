@@ -2,7 +2,54 @@
   "hash": "15f3f047",
   "configHash": "dbaa1d91",
   "lockfileHash": "ae022202",
-  "browserHash": "6e1441f6",
-  "optimized": {},
-  "chunks": {}
+  "browserHash": "8dc7eea1",
+  "optimized": {
+    "react": {
+      "src": "../../node_modules/react/index.js",
+      "file": "react.js",
+      "fileHash": "02097c0a",
+      "needsInterop": true
+    },
+    "react-dom/client": {
+      "src": "../../node_modules/react-dom/client.js",
+      "file": "react-dom_client.js",
+      "fileHash": "871c93eb",
+      "needsInterop": true
+    },
+    "react-router-dom": {
+      "src": "../../node_modules/react-router-dom/dist/index.mjs",
+      "file": "react-router-dom.js",
+      "fileHash": "30c2dd90",
+      "needsInterop": false
+    },
+    "jspdf": {
+      "src": "../../../node_modules/jspdf/dist/jspdf.es.min.js",
+      "file": "jspdf.js",
+      "fileHash": "f62dc76d",
+      "needsInterop": false
+    }
+  },
+  "chunks": {
+    "chunk-N5YWJDII": {
+      "file": "chunk-N5YWJDII.js"
+    },
+    "chunk-HWMK2RSU": {
+      "file": "chunk-HWMK2RSU.js"
+    },
+    "html2canvas.esm-6M67HRPY": {
+      "file": "html2canvas__esm-6M67HRPY.js"
+    },
+    "purify.es-NMQMZHFY": {
+      "file": "purify__es-NMQMZHFY.js"
+    },
+    "index.es-NACTS3J5": {
+      "file": "index__es-NACTS3J5.js"
+    },
+    "chunk-JRJ5JSPZ": {
+      "file": "chunk-JRJ5JSPZ.js"
+    },
+    "chunk-5WRI5ZAA": {
+      "file": "chunk-5WRI5ZAA.js"
+    }
+  }
 }
