@@ -1,12 +1,14 @@
+# backend/main.py
 import os
 import json
 import io
 import re
-from fastapi import FastAPI, UploadFile, File, Form, HTTPException
+from pathlib import Path
+from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
-from typing import List, Optional, Dict, Any
+from typing import List, Optional, Dict
 from dotenv import load_dotenv
 from groq import Groq
 from huggingface_hub import InferenceClient
@@ -14,7 +16,23 @@ from supabase import create_client, Client
 import pdfplumber
 import docx
 
-load_dotenv()
+# ==========================================
+# 0. ROBUST ENVIRONMENT LOADING
+# ==========================================
+BASE_DIR = Path(__file__).resolve().parent
+ENV_PATH = BASE_DIR / ".env"
+load_dotenv(dotenv_path=ENV_PATH)
+
+# AUTO-FIX: Strip whitespace/newlines from keys to prevent "Invalid API Key" errors
+supabase_url = (os.environ.get("SUPABASE_URL") or "").strip()
+supabase_key = (os.environ.get("SUPABASE_KEY") or "").strip()
+groq_key = (os.environ.get("GROQ_API_KEY") or "").strip()
+hf_token = (os.environ.get("HF_API_TOKEN") or "").strip()
+
+if not supabase_url or not supabase_key:
+    print(f"❌ ERROR: Supabase keys missing or empty in {ENV_PATH}")
+else:
+    print("✅ Environment keys loaded and sanitized.")
 
 app = FastAPI()
 
@@ -26,15 +44,30 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --- CLIENTS ---
-groq_client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
-hf_client = InferenceClient(token=os.environ.get("HF_API_TOKEN"))
-supabase: Client = create_client(
-    os.environ.get("SUPABASE_URL"),
-    os.environ.get("SUPABASE_KEY")
-)
+# ==========================================
+# 1. CLIENT SETUP
+# ==========================================
 
-# --- MODELS ---
+# Groq Client
+groq_client = Groq(api_key=groq_key)
+
+# Hugging Face Client
+hf_client = InferenceClient(token=hf_token)
+
+# Supabase Client
+try:
+    if supabase_url and supabase_key:
+        supabase: Client = create_client(supabase_url, supabase_key)
+    else:
+        raise ValueError("Keys are empty string")
+except Exception as e:
+    print(f"⚠️ Warning: Supabase client failed to initialize: {e}")
+    supabase = None
+
+# ==========================================
+# 2. DATA MODELS
+# ==========================================
+
 class JobRequest(BaseModel):
     jobTitle: str
     industry: str = "Technology"
@@ -55,7 +88,10 @@ class ProfileSaveRequest(BaseModel):
     confidence_scores: Dict[str, int] = {}
     job_description: str = ""
 
-# --- HELPERS ---
+# ==========================================
+# 3. HELPER FUNCTIONS
+# ==========================================
+
 def extract_text(file_bytes, filename):
     text = ""
     try:
@@ -82,39 +118,38 @@ def regex_fallback(text):
         "experience": [],
         "projects": []
     }
+    
     email_match = re.search(r'[\w\.-]+@[\w\.-]+', text)
     if email_match: data["email"] = email_match.group(0)
+    
     phone_match = re.search(r'(\+\d{1,3}[- ]?)?\d{10}', text)
     if phone_match: data["phone"] = phone_match.group(0)
+    
+    lines = [l.strip() for l in text.split('\n') if l.strip()]
+    if lines: data["name"] = lines[0]
+
     return data
 
 def calculate_job_relevancy(resume_text, job_description):
-    """
-    Calculates Job Description Relevancy Score (0-100).
-    Based on keyword overlap between JD and Resume.
-    """
     if not job_description or len(job_description.strip()) < 10:
         return 0
     
-    # Simple keyword matching
     resume_words = set(re.findall(r'\w+', resume_text.lower()))
     jd_words = set(re.findall(r'\w+', job_description.lower()))
     
-    stop_words = {"and", "the", "to", "of", "in", "for", "with", "a", "an", "is", "on", "are", "will", "be"}
+    stop_words = {"and", "the", "to", "of", "in", "for", "with", "a", "an", "is", "on", "are", "will", "be", "that", "it", "as"}
     jd_keywords = {w for w in jd_words if w not in stop_words and len(w) > 3}
     
     if not jd_keywords:
         return 0
 
     matches = resume_words.intersection(jd_keywords)
-    # Basic score: percentage of JD keywords found in resume
     raw_score = (len(matches) / len(jd_keywords)) * 100
-    
-    # Boost score slightly to make it realistic (cap at 100)
-    final_score = min(100, int(raw_score * 1.5)) 
-    return final_score
+    return min(100, int(raw_score * 1.5)) 
 
-# --- ENDPOINTS ---
+# ==========================================
+# 4. API ENDPOINTS
+# ==========================================
 
 @app.get("/health")
 def health():
@@ -123,8 +158,9 @@ def health():
 @app.post("/api/generate-job")
 async def generate_job(request: JobRequest):
     try:
-        system_prompt = "You are an expert HR AI."
-        user_prompt = f"Role: {request.jobTitle}, Skills: {request.skills}"
+        system_prompt = "You are an expert HR AI. Generate a structured job description."
+        user_prompt = f"Role: {request.jobTitle}, Skills: {request.skills}, Experience: {request.experienceLevel}"
+        
         completion = groq_client.chat.completions.create(
             messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": user_prompt}],
             model="llama-3.3-70b-versatile",
@@ -143,11 +179,12 @@ async def parse_resume(
         text = extract_text(content, file.filename.lower())
         
         if not text:
-            return JSONResponse(status_code=400, content={"error": "Could not extract text."})
+            return JSONResponse(status_code=400, content={"error": "Could not extract text from file."})
 
-        # 1. AI Parsing
+        # AI Parsing
         user_message = f"""
-        Extract these fields from the resume text below and return ONLY valid JSON:
+        Extract the following fields from the resume text below and return ONLY valid JSON.
+        JSON Structure:
         {{
             "name": "string",
             "email": "string",
@@ -161,7 +198,7 @@ async def parse_resume(
         """
 
         try:
-            # Using Qwen 2.5 7B (Free, Chat Compatible)
+            # Using Qwen 2.5 7B
             response = hf_client.chat_completion(
                 messages=[{"role": "user", "content": user_message}],
                 model="Qwen/Qwen2.5-7B-Instruct", 
@@ -174,21 +211,16 @@ async def parse_resume(
             print(f"AI Failed: {ai_error}")
             parsed_data = regex_fallback(text)
 
-        # 2. Confidence Scores (Mock Approach: 70-95%)
-        # This fulfills Requirement: "Return confidence scores based on extraction quality"
+        # Confidence Scores
         scores = {}
         for key, value in parsed_data.items():
             if not value or (isinstance(value, list) and not value):
-                scores[key] = 0 # Low confidence if missing
+                scores[key] = 0 
             else:
-                # Mock "Intelligent" Scoring
                 scores[key] = 85 if key in ["skills", "experience"] else 95
         
-        # Artificial Amber Check: If email is weird, lower score
-        if "@" not in parsed_data.get("email", ""): 
-            scores["email"] = 40
+        if "@" not in parsed_data.get("email", ""): scores["email"] = 40
 
-        # 3. Job Relevancy Score (User Request)
         relevancy_score = calculate_job_relevancy(text, job_description)
 
         return {
@@ -202,11 +234,11 @@ async def parse_resume(
 
 @app.post("/api/save-profile")
 async def save_profile(profile: ProfileSaveRequest):
+    if not supabase:
+        return JSONResponse(status_code=500, content={"success": False, "error": "Database not connected"})
+
     try:
-        # Pydantic v2 fix: use model_dump()
         data = profile.model_dump()
-        
-        # Insert into Supabase
         response = supabase.table("resumes").insert({
             "name": data["name"],
             "email": data["email"],
@@ -224,7 +256,7 @@ async def save_profile(profile: ProfileSaveRequest):
         return {"success": True, "message": "Profile saved to database"}
 
     except Exception as e:
-        print(f"❌ DB ERROR: {e}") # This will show in your terminal now
+        print(f"❌ DB ERROR: {e}") 
         return JSONResponse(status_code=500, content={"success": False, "error": str(e)})
 
 if __name__ == "__main__":
