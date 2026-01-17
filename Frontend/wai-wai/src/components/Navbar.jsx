@@ -1,15 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
-import { useAuth } from "../context/AuthContext";
-import {
-  FiBriefcase,
-  FiHome,
-  FiMenu,
-  FiX,
-  FiLogOut,
-  FiUser,
-} from "react-icons/fi";
+// frontend/wai-wai/src/components/Navbar.jsx
+import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -77,69 +69,16 @@ const Navbar = () => {
           </motion.div>
         </Link>
 
-        {/* Desktop Links */}
-        <div style={styles.desktopLinks}>
-          {navLinks.map((link) => (
-            <Link
-              key={link.path}
-              to={link.path}
-              style={{ textDecoration: "none" }}
-            >
-              <motion.div
-                style={{
-                  ...styles.navLink,
-                  ...(isActive(link.path) ? styles.navLinkActive : {}),
-                }}
-                whileHover={{ y: -2 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <span style={styles.navIcon}>{link.icon}</span>
-                {link.label}
-              </motion.div>
-            </Link>
-          ))}
+        {/* Show Smart Resume to all logged-in users */}
+        {user && (
+             <Link to="/resume-parser" style={styles.link}>Smart Resume</Link>
+        )}
 
-          {/* Auth Button */}
-          {user ? (
-            <div style={styles.userSection}>
-              <div style={styles.userInfo}>
-                <FiUser style={styles.userIcon} />
-                <span style={styles.userEmail}>{user.email}</span>
-              </div>
-              <motion.button
-                onClick={handleLogout}
-                style={styles.logoutBtn}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <FiLogOut style={styles.btnIcon} />
-                Logout
-              </motion.button>
-            </div>
-          ) : (
-            <Link to="/auth" style={{ textDecoration: "none" }}>
-              <motion.button
-                style={styles.ctaButton}
-                whileHover={{
-                  scale: 1.05,
-                  boxShadow: "0 10px 25px rgba(79, 70, 229, 0.3)",
-                }}
-                whileTap={{ scale: 0.95 }}
-              >
-                Get Started
-              </motion.button>
-            </Link>
-          )}
-        </div>
-
-        {/* Mobile Menu Button */}
-        <motion.button
-          style={styles.mobileMenuBtn}
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          whileTap={{ scale: 0.9 }}
-        >
-          {mobileMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
-        </motion.button>
+        {user ? (
+            <button onClick={handleLogout} style={styles.ctaButton}>Logout</button>
+        ) : (
+            <Link to="/auth" style={styles.ctaButton}>Login / Sign Up</Link>
+        )}
       </div>
 
       {/* Mobile Menu */}
