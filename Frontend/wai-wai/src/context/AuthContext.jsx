@@ -1,6 +1,6 @@
 // frontend/wai-wai/src/context/AuthContext.jsx
-import React, { createContext, useState, useEffect, useContext } from 'react';
-import { supabase } from '../supabaseClient';
+import React, { createContext, useState, useEffect, useContext } from "react";
+import { supabase } from "../supabaseClient";
 
 const AuthContext = createContext();
 
@@ -12,10 +12,12 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     // 1. Check active session on load
     const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (session?.user) {
         setUser(session.user);
-        setRole(session.user.user_metadata?.role || 'candidate');
+        setRole(session.user.user_metadata?.role || "candidate");
       }
       setLoading(false);
     };
@@ -23,10 +25,12 @@ export const AuthProvider = ({ children }) => {
     checkSession();
 
     // 2. Listen for changes (login/logout)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (session?.user) {
         setUser(session.user);
-        setRole(session.user.user_metadata?.role || 'candidate');
+        setRole(session.user.user_metadata?.role || "candidate");
       } else {
         setUser(null);
         setRole(null);
@@ -45,8 +49,8 @@ export const AuthProvider = ({ children }) => {
       email,
       password,
       options: {
-        data: { role: role } // This saves 'employer' or 'candidate' in the user object
-      }
+        data: { role: role }, // This saves 'employer' or 'candidate' in the user object
+      },
     });
     if (error) throw error;
     return data;
@@ -58,9 +62,9 @@ export const AuthProvider = ({ children }) => {
       email,
       password,
     });
-    
+
     if (error) throw error;
-    
+
     // Check if the user is logging in with the correct role intent
     // (We will enforce strict role checks in the UI/Protected Routes)
     return data;
@@ -68,12 +72,27 @@ export const AuthProvider = ({ children }) => {
 
   // LOGOUT FUNCTION
   const logout = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) throw error;
+    try {
+      console.log("Attempting to logout...");
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error("Logout error:", error);
+        throw error;
+      }
+      // Explicitly clear user state
+      setUser(null);
+      setRole(null);
+      console.log("Logout successful");
+    } catch (error) {
+      console.error("Logout failed:", error);
+      throw error;
+    }
   };
 
   return (
-    <AuthContext.Provider value={{ user, role, register, login, logout, loading }}>
+    <AuthContext.Provider
+      value={{ user, role, register, login, logout, loading }}
+    >
       {!loading && children}
     </AuthContext.Provider>
   );

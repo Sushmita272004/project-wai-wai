@@ -1,0 +1,126 @@
+/* Responsive Styles for Mobile and Tablet Devices */
+
+/* Mobile Menu Toggle */
+@media (max-width: 768px) {
+  /* Hide desktop links and show mobile menu button */
+  nav > div > div:nth-child(2) {
+    display: none !important;
+  }
+
+  /* Auth Page - Single Column Layout */
+  .auth-wrapper {
+    grid-template-columns: 1fr !important;
+  }
+
+  .auth-branding-side {
+    display: none !important;
+  }
+
+  .auth-form-side {
+    padding: 2rem 1.5rem !important;
+  }
+
+  /* Home Page Adjustments */
+  .hero-stats {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 1rem !important;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Job Generator Adjustments */
+  .job-generator-card {
+    padding: 1.5rem !important;
+  }
+
+  .radio-group {
+    grid-template-columns: 1fr !important;
+  }
+
+  .action-buttons {
+    flex-direction: column !important;
+  }
+
+  .action-buttons button {
+    width: 100% !important;
+  }
+
+  .result-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+
+  /* Footer Adjustments */
+  footer .top-section {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+  }
+
+  footer .bottom-section {
+    flex-direction: column !important;
+    text-align: center !important;
+  }
+}
+
+/* Tablet Adjustments */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  footer .top-section {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* Small Mobile Devices */
+@media (max-width: 480px) {
+  .hero-stats {
+    grid-template-columns: 1fr !important;
+  }
+
+  .button-group {
+    flex-direction: column !important;
+    width: 100% !important;
+  }
+
+  .button-group button,
+  .button-group a {
+    width: 100% !important;
+  }
+
+  .progress-bar {
+    padding: 0 0.5rem !important;
+  }
+
+  .tab-container {
+    gap: 0.5rem !important;
+    padding: 0.25rem !important;
+  }
+}
+
+/* Ensure inputs and textareas are responsive */
+@media (max-width: 768px) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important; /* Prevents zoom on iOS */
+  }
+}
+
+/* Print Styles for PDF Export */
+@media print {
+  nav,
+  footer,
+  .action-buttons,
+  .navigation {
+    display: none !important;
+  }
+
+  .result-textarea {
+    border: none !important;
+    font-family: "Times New Roman", serif !important;
+  }
+}
