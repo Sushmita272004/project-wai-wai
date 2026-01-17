@@ -1,5 +1,5 @@
 // frontend/wai-wai/src/pages/Home.jsx
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import {
@@ -13,6 +13,46 @@ import "../styles/Home.css";
 const Home = () => {
   const navigate = useNavigate();
   const { user, role } = useAuth();
+
+  useEffect(() => {
+    // Load Three.js
+    const threeScript = document.createElement("script");
+    threeScript.src = "/vanta/three.r134.min.js";
+    threeScript.async = true;
+    document.head.appendChild(threeScript);
+
+    threeScript.onload = () => {
+      // Load Vanta RINGS after Three.js loads
+      const vantaScript = document.createElement("script");
+      vantaScript.src = "/vanta/vanta.rings.min.js";
+      vantaScript.async = true;
+      document.head.appendChild(vantaScript);
+
+      vantaScript.onload = () => {
+        // Initialize Vanta after both scripts are loaded
+        if (window.VANTA && window.VANTA.RINGS) {
+          window.VANTA.RINGS({
+            el: ".hero-section",
+            mouseControls: true,
+            touchControls: true,
+            gyroControls: false,
+            minHeight: 200,
+            minWidth: 200,
+            scale: 1.0,
+            scaleMobile: 1.0,
+            backgroundColor: 0x29292a,
+          });
+        }
+      };
+    };
+
+    return () => {
+      // Cleanup on unmount
+      if (document.head.contains(threeScript)) {
+        document.head.removeChild(threeScript);
+      }
+    };
+  }, []);
 
   const features = [
     {
@@ -75,9 +115,9 @@ const Home = () => {
     <div className="home-container">
       <section className="hero-section">
         <h1 className="hero-title">Welcome to Wai Wai</h1>
-        <p className="hero-subtitle">
+        {/* <p className="hero-subtitle">
           Your intelligent job matching and recruitment platform
-        </p>
+        </p> */}
         {!user && (
           <button className="cta-button" onClick={() => navigate("/auth")}>
             Get Started
