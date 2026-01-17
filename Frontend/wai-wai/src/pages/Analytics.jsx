@@ -44,12 +44,21 @@ const Analytics = () => {
   const [recentApps, setRecentApps] = useState([]);
   const [loading, setLoading] = useState(true);
   const [dateRange, setDateRange] = useState("last_30_days");
+  const [isMobile, setIsMobile] = useState(false);
 
   const API_BASE = "http://127.0.0.1:5000";
 
   useEffect(() => {
     fetchAnalyticsData();
   }, [dateRange]);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 768px)");
+    const update = () => setIsMobile(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
 
   const fetchAnalyticsData = async () => {
     setLoading(true);
@@ -137,6 +146,7 @@ const Analytics = () => {
           <select
             value={dateRange}
             onChange={(e) => setDateRange(e.target.value)}
+            aria-label="Select date range"
           >
             <option value="last_7_days">Last 7 Days</option>
             <option value="last_30_days">Last 30 Days</option>
@@ -191,7 +201,7 @@ const Analytics = () => {
           transition={{ delay: 0.1 }}
         >
           <h3>Application Pipeline</h3>
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={isMobile ? 240 : 300}>
             <BarChart data={pipeline}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
               <XAxis dataKey="stage" stroke="#6b7280" />
@@ -216,7 +226,7 @@ const Analytics = () => {
           transition={{ delay: 0.2 }}
         >
           <h3>Time to Hire Trend</h3>
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={isMobile ? 240 : 300}>
             <LineChart data={timeToHire}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
               <XAxis dataKey="week" stroke="#6b7280" />
@@ -250,7 +260,7 @@ const Analytics = () => {
           transition={{ delay: 0.3 }}
         >
           <h3>Source Breakdown</h3>
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={isMobile ? 240 : 300}>
             <PieChart>
               <Pie
                 data={sources}
@@ -258,8 +268,12 @@ const Analytics = () => {
                 nameKey="source"
                 cx="50%"
                 cy="50%"
-                outerRadius={100}
-                label={(entry) => `${entry.source}: ${entry.applications}`}
+                outerRadius={isMobile ? 80 : 100}
+                label={
+                  isMobile
+                    ? false
+                    : (entry) => `${entry.source}: ${entry.applications}`
+                }
               >
                 {sources.map((entry, index) => (
                   <Cell
@@ -275,6 +289,7 @@ const Analytics = () => {
                   borderRadius: "8px",
                 }}
               />
+              {isMobile && <Legend verticalAlign="bottom" height={24} />}
             </PieChart>
           </ResponsiveContainer>
         </motion.div>
@@ -287,7 +302,7 @@ const Analytics = () => {
           transition={{ delay: 0.4 }}
         >
           <h3>Candidate Quality Distribution</h3>
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={isMobile ? 240 : 300}>
             <BarChart data={quality}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
               <XAxis dataKey="range" stroke="#6b7280" />

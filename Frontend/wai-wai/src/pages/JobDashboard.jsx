@@ -1,5 +1,11 @@
 // frontend/wai-wai/src/pages/JobDashboard.jsx
-import React, { useState, useMemo, useRef } from "react";
+import React, {
+  useState,
+  useMemo,
+  useRef,
+  useEffect,
+  useDeferredValue,
+} from "react";
 import FilterPanel from "../components/FilterPanel";
 import JobCard from "../components/JobCard";
 import mockJobs from "../data/mockJobs.json";
@@ -32,6 +38,39 @@ const JobDashboard = () => {
     jobTypes: [],
     datePosted: "any",
   });
+
+  // --- MOBILE OPTIMIZATIONS ---
+  const deferredSearchTerm = useDeferredValue(searchTerm);
+  const [isMobile, setIsMobile] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(16);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      const mobile = window.matchMedia("(max-width: 768px)").matches;
+      setIsMobile(mobile);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  useEffect(() => {
+    // Adjust defaults for mobile for better UX
+    if (isMobile) {
+      setViewMode((prev) => (prev === "grid" ? "list" : prev));
+      setVisibleCount(10);
+    } else {
+      setVisibleCount(24);
+    }
+  }, [isMobile]);
+
+  useEffect(() => {
+    // Prevent background scroll when filters are open (mobile overlay)
+    document.body.style.overflow = isFilterOpen ? "hidden" : "auto";
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [isFilterOpen]);
 
   // --- 1. HANDLE RESUME UPLOAD ---
   const handleResumeUpload = async (e) => {
@@ -116,8 +155,8 @@ const JobDashboard = () => {
     return jobsWithScores
       .filter((job) => {
         const matchesSearch =
-          job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          job.company.toLowerCase().includes(searchTerm.toLowerCase());
+          job.title.toLowerCase().includes(deferredSearchTerm.toLowerCase()) ||
+          job.company.toLowerCase().includes(deferredSearchTerm.toLowerCase());
         const matchesLocation =
           filters.locations.length === 0 ||
           filters.locations.includes(job.location);
@@ -146,6 +185,11 @@ const JobDashboard = () => {
       });
   }, [searchTerm, filters, sortBy, jobsWithScores]);
 
+  // Limit jobs on mobile and add incremental loading
+  const displayedJobs = useMemo(() => {
+    return filteredJobs.slice(0, visibleCount);
+  }, [filteredJobs, visibleCount]);
+
   return (
     <div className="job-dashboard-container">
       {/* MOBILE OVERLAY */}
@@ -170,13 +214,14 @@ const JobDashboard = () => {
           {/* SEARCH & CONTROLS */}
           <div className="job-dashboard-top-bar">
             <div className="job-search-wrapper">
-              <FiSearch className="job-search-icon" />
+              <FiSearch className="job-search-icon" aria-hidden="true" />
               <input
                 type="text"
                 placeholder="Search by role, company..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="job-search-input"
+                aria-label="Search jobs"
               />
             </div>
 
@@ -189,10 +234,10 @@ const JobDashboard = () => {
                 accept=".pdf,.docx"
                 onChange={handleResumeUpload}
               />
-
               {!resumeData ? (
                 <button
                   onClick={() => fileInputRef.current.click()}
+                  aria-label="Upload resume for smart match"
                   disabled={isUploading}
                   className="job-upload-btn"
                 >
@@ -207,6 +252,7 @@ const JobDashboard = () => {
                   </span>
                   <button
                     onClick={clearResumeMatch}
+                    aria-label="Clear uploaded resume"
                     className="job-clear-resume-btn"
                     title="Remove Resume"
                   >
@@ -225,24 +271,32 @@ const JobDashboard = () => {
                 <option value="date">Newest First</option>
               </select>
 
-              <div className="job-view-toggle">
-                <button
-                  onClick={() => setViewMode("grid")}
-                  className={
-                    viewMode === "grid" ? "job-icon-btn-active" : "job-icon-btn"
-                  }
-                >
-                  <FiGrid />
-                </button>
-                <button
-                  onClick={() => setViewMode("list")}
-                  className={
-                    viewMode === "list" ? "job-icon-btn-active" : "job-icon-btn"
-                  }
-                >
-                  <FiList />
-                </button>
-              </div>
+              {!isMobile && (
+                <div className="job-view-toggle">
+                  <button
+                    onClick={() => setViewMode("grid")}
+                    className={
+                      viewMode === "grid"
+                        ? "job-icon-btn-active"
+                        : "job-icon-btn"
+                    }
+                    aria-label="Grid view"
+                  >
+                    <FiGrid />
+                  </button>
+                  <button
+                    onClick={() => setViewMode("list")}
+                    className={
+                      viewMode === "list"
+                        ? "job-icon-btn-active"
+                        : "job-icon-btn"
+                    }
+                    aria-label="List view"
+                  >
+                    <FiList />
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
@@ -259,9 +313,16 @@ const JobDashboard = () => {
             </p>
           </div>
 
-          <div className={viewMode === "grid" ? "job-grid" : "job-list"}>
-            {filteredJobs.length > 0 ? (
-              filteredJobs.map((job) => <JobCard key={job.id} job={job} />)
+          {/** Enforce list view on mobile */}
+          <div
+            className={
+              (isMobile ? "list" : viewMode) === "grid"
+                ? "job-grid"
+                : "job-list"
+            }
+          >
+            {displayedJobs.length > 0 ? (
+              displayedJobs.map((job) => <JobCard key={job.id} job={job} />)
             ) : (
               <div className="job-no-results">
                 <h3>No jobs found</h3>
@@ -284,12 +345,31 @@ const JobDashboard = () => {
               </div>
             )}
           </div>
+
+          {isMobile && displayedJobs.length < filteredJobs.length && (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                marginTop: "var(--space-4)",
+              }}
+            >
+              <button
+                className="job-mobile-load-more-btn"
+                onClick={() => setVisibleCount((c) => c + 10)}
+                aria-label="Load more jobs"
+              >
+                Load More
+              </button>
+            </div>
+          )}
         </main>
       </div>
 
       <button
         className="mobile-only job-mobile-float-btn"
         onClick={() => setIsFilterOpen(true)}
+        aria-label="Open filters"
       >
         <FiFilter style={{ marginRight: "8px" }} /> Filters
       </button>

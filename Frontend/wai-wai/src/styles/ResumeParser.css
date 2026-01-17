@@ -1,0 +1,448 @@
+/* Resume Parser Page Styles */
+
+.rp-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.rp-title {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #000;
+}
+
+/* Upload Card */
+.rp-upload-card {
+  padding: 40px;
+  border: 2px dashed #94a3b8;
+  border-radius: 12px;
+  text-align: center;
+  background-color: #f8fafc;
+  max-width: 700px;
+  margin: 40px auto;
+}
+
+.rp-label,
+.rp-label-muted {
+  font-weight: bold;
+}
+
+.rp-label-muted {
+  display: block;
+  margin-bottom: 8px;
+  color: #64748b;
+}
+
+.rp-input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 1rem;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+}
+
+.rp-textarea {
+  min-height: 100px;
+}
+
+.rp-drop-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.rp-drop-zone-text {
+  font-size: 1.1rem;
+  color: #64748b;
+}
+
+.rp-upload-input-wrapper {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+}
+
+.rp-upload-btn {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.rp-hidden-input {
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.rp-file-selected-box {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background-color: #d1fae5;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 1px solid #10b981;
+}
+
+.rp-remove-btn {
+  background: none;
+  border: none;
+  color: #047857;
+  cursor: pointer;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.rp-progress-container {
+  width: 80%;
+  margin: 25px auto 0;
+}
+
+.rp-progress-bg {
+  width: 100%;
+  height: 12px;
+  background-color: #e2e8f0;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.rp-progress-fill {
+  height: 100%;
+  background-color: #4f46e5;
+  transition: width 0.2s ease;
+}
+
+.rp-progress-text {
+  margin-top: 10px;
+  color: #4f46e5;
+  font-weight: bold;
+}
+
+.rp-parse-btn {
+  margin-top: 25px;
+  padding: 14px 35px;
+  background-color: #4f46e5;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* Results Split View */
+.rp-split-view {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 30px;
+  align-items: start;
+}
+
+.rp-form-panel {
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.rp-preview-panel {
+  height: 1200px;
+  background-color: #e2e8f0;
+  border-radius: 12px;
+  padding: 15px;
+  position: sticky;
+  top: 20px;
+}
+
+.rp-panel-header {
+  font-weight: 700;
+}
+
+.rp-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.rp-relevancy-badge {
+  padding: 5px 15px;
+  background-color: #dcfce7;
+  color: #166534;
+  border-radius: 20px;
+  font-weight: bold;
+}
+
+.rp-iframe {
+  width: 100%;
+  height: 96%;
+  border: none;
+  background-color: #fff;
+  border-radius: 4px;
+  margin-top: 10px;
+}
+
+.rp-docx-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #666;
+}
+
+/* Gap Analysis */
+.rp-analyze-btn {
+  width: 100%;
+  padding: 15px;
+  background-color: #8b5cf6;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  font-weight: bold;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 6px rgba(139, 92, 246, 0.25);
+}
+
+.rp-analyzing-text {
+  text-align: center;
+  color: #4f46e5;
+  font-weight: bold;
+  padding: 20px;
+}
+
+.rp-gap-section {
+  margin-top: 30px;
+  border-top: 2px dashed #e2e8f0;
+  padding-top: 20px;
+}
+
+.rp-gap-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.rp-section-title {
+  font-size: 1.25rem;
+  color: #1e293b;
+  border-left: 5px solid #4f46e5;
+  padding-left: 10px;
+}
+
+.rp-readiness-card {
+  display: flex;
+  align-items: center;
+  background-color: #f0fdf4;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #bbf7d0;
+  margin-bottom: 15px;
+}
+
+.rp-readiness-score {
+  text-align: center;
+  padding-right: 20px;
+  border-right: 1px solid #ddd;
+}
+
+.rp-readiness-value {
+  font-size: 2.5rem;
+  font-weight: 800;
+}
+
+.rp-readiness-value.good {
+  color: #10b981;
+}
+.rp-readiness-value.warn {
+  color: #f59e0b;
+}
+
+.rp-readiness-label {
+  font-size: 0.8rem;
+}
+
+.rp-readiness-text {
+  padding-left: 20px;
+}
+
+.rp-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.rp-stat-box {
+  background-color: #f8fafc;
+  padding: 10px;
+  border-radius: 8px;
+  text-align: center;
+  border: 1px solid #e2e8f0;
+}
+
+.rp-stat-key {
+  font-size: 0.7rem;
+  color: #666;
+}
+.rp-stat-val {
+  font-weight: bold;
+  color: #059669;
+}
+
+.rp-sub-header {
+  margin-top: 25px;
+  margin-bottom: 10px;
+  color: #334155;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 5px;
+}
+
+.rp-roadmap-step {
+  display: flex;
+  align-items: flex-start;
+  background-color: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  border-left: 4px solid #4f46e5;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.rp-step-badge {
+  background-color: #eef2ff;
+  color: #4f46e5;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-weight: bold;
+  margin-right: 15px;
+  white-space: nowrap;
+}
+
+.rp-roadmap-focus {
+  font-weight: bold;
+}
+.rp-roadmap-duration {
+  font-size: 0.8em;
+  color: #666;
+}
+.rp-roadmap-reason {
+  font-size: 0.9em;
+  color: #444;
+}
+
+.rp-alt-path-card {
+  background-color: #fdf4ff;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  border: 1px solid #f0abfc;
+}
+
+.rp-alt-path-role {
+  font-weight: bold;
+  color: #1e293b;
+}
+.rp-alt-path-match {
+  font-size: 0.8em;
+  color: #059669;
+}
+.rp-alt-path-text {
+  font-size: 0.9em;
+  color: #475569;
+}
+
+.rp-salary-box {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  background-color: #fffbeb;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #fcd34d;
+}
+
+.rp-salary-insight {
+  grid-column: 1 / -1;
+  margin-top: 5px;
+  font-size: 0.9em;
+  font-style: italic;
+}
+
+/* Actions */
+.rp-actions {
+  margin-top: 30px;
+  display: flex;
+  gap: 15px;
+}
+
+.rp-save-btn {
+  flex: 2;
+  padding: 14px;
+  background-color: #10b981;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.rp-cancel-btn {
+  flex: 1;
+  padding: 14px;
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.rp-pdf-btn {
+  background-color: #ef4444;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .rp-preview-panel {
+    position: static;
+    height: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .rp-upload-card {
+    margin: 20px auto;
+    padding: 24px;
+  }
+
+  .rp-split-view {
+    grid-template-columns: 1fr;
+  }
+
+  .rp-actions {
+    flex-direction: column;
+  }
+
+  .rp-salary-box {
+    grid-template-columns: 1fr;
+  }
+}

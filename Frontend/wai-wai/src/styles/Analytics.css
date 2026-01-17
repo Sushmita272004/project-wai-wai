@@ -103,6 +103,7 @@
 
 .metric-content {
   flex: 1;
+  min-width: 0; /* allow flex item to shrink for ellipsis */
 }
 
 .metric-title {
@@ -115,11 +116,15 @@
 }
 
 .metric-value {
-  font-size: clamp(1.5rem, 3vw, 2rem);
+  /* Slightly smaller, responsive scaling to reduce overflow */
+  font-size: clamp(1.25rem, 2.2vw, 1.75rem);
   font-weight: 800;
   color: var(--color-gray-900);
   margin-bottom: var(--space-2);
   letter-spacing: -0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .metric-change {
@@ -199,6 +204,7 @@
 
 .table-container {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 table {
@@ -399,6 +405,7 @@ tbody tr:hover {
   .date-range-selector select {
     width: 100%;
     font-size: 16px;
+    min-height: 40px;
   }
 
   .metrics-grid {
@@ -510,5 +517,20 @@ tbody tr:hover {
   td {
     padding: var(--space-2);
     font-size: 11px;
+  }
+}
+
+/* Extra small devices */
+@media (max-width: 360px) {
+  .analytics-container {
+    padding: var(--space-2);
+  }
+
+  .analytics-header {
+    padding: var(--space-2);
+  }
+
+  .chart-card {
+    padding: var(--space-3);
   }
 }
