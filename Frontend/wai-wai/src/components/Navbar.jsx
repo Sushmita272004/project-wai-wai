@@ -13,7 +13,7 @@ import {
   FiX,
   FiBarChart2,
   FiBell,
-  FiInfo // Added for Toast Icon
+  FiInfo, // Added for Toast Icon
 } from "react-icons/fi";
 import "../styles/Navbar.css";
 
@@ -37,10 +37,12 @@ const Navbar = () => {
     window.addEventListener("scroll", handleScroll);
 
     if (user?.email) {
-      fetch(`http://127.0.0.1:5000/notifications/user/${user.email}/unread-count`)
-        .then(res => res.json())
-        .then(data => setUnreadCount(data.count))
-        .catch(err => console.error(err));
+      const API_BASE =
+        import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:5000";
+      fetch(`${API_BASE}/notifications/user/${user.email}/unread-count`)
+        .then((res) => res.json())
+        .then((data) => setUnreadCount(data.count))
+        .catch((err) => console.error(err));
     }
     return () => window.removeEventListener("scroll", handleScroll);
   }, [user]);
@@ -50,7 +52,10 @@ const Navbar = () => {
     if (!user?.email) return;
 
     // Connect to Backend WebSocket
-    const ws = new WebSocket(`ws://127.0.0.1:5000/ws/${user.email}`);
+    const API_BASE =
+      import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:5000";
+    const WS_URL = API_BASE.replace(/^https/, "wss").replace(/^http/, "ws");
+    const ws = new WebSocket(`${WS_URL}/ws/${user.email}`);
 
     ws.onopen = () => {
       console.log("🟢 Connected to Real-Time Notification Server");
@@ -62,11 +67,11 @@ const Navbar = () => {
 
       if (data.type === "NEW_NOTIFICATION") {
         // A. Increment Badge
-        setUnreadCount(prev => prev + 1);
-        
+        setUnreadCount((prev) => prev + 1);
+
         // B. Show Toast
         setToast(data.notification);
-        
+
         // Auto-hide toast after 5 seconds
         setTimeout(() => setToast(null), 5000);
       }
@@ -176,11 +181,13 @@ const Navbar = () => {
           <div className="desktop-actions">
             {user ? (
               <>
-                 {/* NOTIFICATION BELL WITH REAL-TIME BADGE */}
+                {/* NOTIFICATION BELL WITH REAL-TIME BADGE */}
                 <Link to="/notifications" className="nav-icon-link">
                   <div className="notification-bell">
                     <FiBell size={20} />
-                    {unreadCount > 0 && <span className="nav-badge">{unreadCount}</span>}
+                    {unreadCount > 0 && (
+                      <span className="nav-badge">{unreadCount}</span>
+                    )}
                   </div>
                 </Link>
 
@@ -259,22 +266,24 @@ const Navbar = () => {
                   </div>
                   {/* Mobile Notification Link */}
                   <Link
-                      to="/notifications"
-                      style={{ textDecoration: "none" }}
-                      onClick={() => setMobileMenuOpen(false)}
+                    to="/notifications"
+                    style={{ textDecoration: "none" }}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <motion.div
+                      className={`mobile-nav-link ${
+                        isActive("/notifications") ? "active" : ""
+                      }`}
+                      initial={{ x: -20, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      transition={{ delay: navLinks.length * 0.1 }}
                     >
-                     <motion.div
-                        className={`mobile-nav-link ${
-                          isActive("/notifications") ? "active" : ""
-                        }`}
-                        initial={{ x: -20, opacity: 0 }}
-                        animate={{ x: 0, opacity: 1 }}
-                        transition={{ delay: navLinks.length * 0.1 }}
-                      >
-                         <span className="nav-icon"><FiBell /></span>
-                         Notifications {unreadCount > 0 && `(${unreadCount})`}
-                      </motion.div>
-                    </Link>
+                      <span className="nav-icon">
+                        <FiBell />
+                      </span>
+                      Notifications {unreadCount > 0 && `(${unreadCount})`}
+                    </motion.div>
+                  </Link>
 
                   <motion.button
                     onClick={handleLogout}
@@ -311,7 +320,7 @@ const Navbar = () => {
       {/* --- REAL-TIME TOAST NOTIFICATION UI --- */}
       <AnimatePresence>
         {toast && (
-          <motion.div 
+          <motion.div
             className="realtime-toast"
             initial={{ opacity: 0, y: 50, x: 50 }}
             animate={{ opacity: 1, y: 0, x: 0 }}

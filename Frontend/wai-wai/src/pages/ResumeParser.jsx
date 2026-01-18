@@ -49,7 +49,9 @@ const ResumeParser = () => {
     formData.append("job_description", jobDescription);
 
     const xhr = new XMLHttpRequest();
-    xhr.open("POST", "http://127.0.0.1:5000/api/parse-resume");
+    const API_BASE =
+      import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:5000";
+    xhr.open("POST", `${API_BASE}/api/parse-resume`);
 
     xhr.upload.onprogress = (event) => {
       if (event.lengthComputable) {
@@ -94,7 +96,9 @@ const ResumeParser = () => {
           : 1,
       };
 
-      const res = await fetch("http://127.0.0.1:5000/api/analyze-gap", {
+      const API_BASE =
+        import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:5000";
+      const res = await fetch(`${API_BASE}/api/analyze-gap`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -120,7 +124,9 @@ const ResumeParser = () => {
         roadmap_data: gapData,
         candidate_name: parsedData.name || "Candidate",
       };
-      const res = await fetch("http://127.0.0.1:5000/api/download-roadmap", {
+      const API_BASE =
+        import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:5000";
+      const res = await fetch(`${API_BASE}/api/download-roadmap`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -154,7 +160,9 @@ const ResumeParser = () => {
         confidence_scores: confidence,
         job_description: jobDescription,
       };
-      const res = await fetch("http://127.0.0.1:5000/api/save-profile", {
+      const API_BASE =
+        import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:5000";
+      const res = await fetch(`${API_BASE}/api/save-profile`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

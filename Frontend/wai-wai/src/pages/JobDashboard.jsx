@@ -96,7 +96,9 @@ const JobDashboard = () => {
 
     try {
       // Using Gemini-powered backend endpoint
-      const res = await fetch("http://127.0.0.1:5000/api/parse-resume", {
+      const API_BASE =
+        import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:5000";
+      const res = await fetch(`${API_BASE}/api/parse-resume`, {
         method: "POST",
         body: formData,
       });
@@ -105,7 +107,7 @@ const JobDashboard = () => {
       if (res.ok) {
         setResumeData(data.extracted_data);
         alert(
-          `✅ Resume Parsed! Jobs are now ranked for ${data.extracted_data.name} based on AI skill extraction.`
+          `✅ Resume Parsed! Jobs are now ranked for ${data.extracted_data.name} based on AI skill extraction.`,
         );
       } else {
         alert("Parsing failed. Please try again.");
@@ -126,47 +128,60 @@ const JobDashboard = () => {
   // --- 2. SMART MATCHING LOGIC (UPDATED) ---
   const jobsWithScores = useMemo(() => {
     // If no resume is uploaded, return jobs with default/zero scores and no missing skills
-    if (!resumeData) return mockJobs.map(job => ({ ...job, matchScore: 0, missingSkills: [] }));
+    if (!resumeData)
+      return mockJobs.map((job) => ({
+        ...job,
+        matchScore: 0,
+        missingSkills: [],
+      }));
 
     return mockJobs.map((job) => {
       let score = 0;
 
       // Normalize Skills
       const jobSkills = (job.skills || []).map((s) => s.toLowerCase().trim());
-      const userSkills = (resumeData.skills || []).map((s) => s.toLowerCase().trim());
+      const userSkills = (resumeData.skills || []).map((s) =>
+        s.toLowerCase().trim(),
+      );
 
       // Calculate Overlap
       // We check if a job skill exists in user skills (fuzzy string check)
       const matchingSkills = jobSkills.filter((jobSkill) =>
         userSkills.some(
-          (userSkill) => userSkill.includes(jobSkill) || jobSkill.includes(userSkill)
-        )
+          (userSkill) =>
+            userSkill.includes(jobSkill) || jobSkill.includes(userSkill),
+        ),
       );
 
       // Identify Missing Skills
       const missingSkills = jobSkills.filter(
         (jobSkill) =>
           !userSkills.some(
-            (userSkill) => userSkill.includes(jobSkill) || jobSkill.includes(userSkill)
-          )
+            (userSkill) =>
+              userSkill.includes(jobSkill) || jobSkill.includes(userSkill),
+          ),
       );
 
       // Score Calculation (Weight: 70% Skills, 30% Experience/Base)
-      const skillMatchRatio = jobSkills.length > 0 ? matchingSkills.length / jobSkills.length : 0;
+      const skillMatchRatio =
+        jobSkills.length > 0 ? matchingSkills.length / jobSkills.length : 0;
       score += skillMatchRatio * 70;
 
       // Experience Boost (Simple logic: if user exp >= job exp req)
       // Assuming mockJobs have numeric 'experience' and parsed data has 'experience' array or string
       // Just adding a base boost for now to ensure good candidates get high scores
-      score += 20; 
+      score += 20;
 
       // Cap score at 99%
-      const finalScore = Math.min(99, Math.round(score + (skillMatchRatio > 0.8 ? 9 : 0)));
+      const finalScore = Math.min(
+        99,
+        Math.round(score + (skillMatchRatio > 0.8 ? 9 : 0)),
+      );
 
-      return { 
-        ...job, 
+      return {
+        ...job,
         matchScore: finalScore,
-        missingSkills: missingSkills // Pass this to the card!
+        missingSkills: missingSkills, // Pass this to the card!
       };
     });
   }, [resumeData]);
@@ -267,7 +282,9 @@ const JobDashboard = () => {
                   className="job-upload-btn"
                 >
                   <FiUploadCloud style={{ fontSize: "1.1rem" }} />
-                  {isUploading ? "Scanning with Gemini..." : "Smart Match with Resume"}
+                  {isUploading
+                    ? "Scanning with Gemini..."
+                    : "Smart Match with Resume"}
                 </button>
               ) : (
                 <div className="job-active-resume-badge">
@@ -331,9 +348,7 @@ const JobDashboard = () => {
               <span className="job-results-count">{filteredJobs.length}</span>{" "}
               opportunities
               {resumeData && (
-                <span className="job-results-badge">
-                  (AI Ranked & Parsed)
-                </span>
+                <span className="job-results-badge">(AI Ranked & Parsed)</span>
               )}
             </p>
           </div>
@@ -348,12 +363,12 @@ const JobDashboard = () => {
           >
             {displayedJobs.length > 0 ? (
               displayedJobs.map((job) => (
-                <JobCard 
-                    key={job.id} 
-                    job={job} 
-                    // Assuming JobCard can render these props if updated, 
-                    // or user has updated JobCard to consume 'job.missingSkills' 
-                    // found inside the job object itself.
+                <JobCard
+                  key={job.id}
+                  job={job}
+                  // Assuming JobCard can render these props if updated,
+                  // or user has updated JobCard to consume 'job.missingSkills'
+                  // found inside the job object itself.
                 />
               ))
             ) : (
@@ -404,7 +419,7 @@ const JobDashboard = () => {
                   >
                     {number}
                   </button>
-                )
+                ),
               )}
 
               {/* Next Arrow */}

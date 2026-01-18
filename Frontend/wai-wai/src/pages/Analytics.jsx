@@ -46,7 +46,7 @@ const Analytics = () => {
   const [dateRange, setDateRange] = useState("last_30_days");
   const [isMobile, setIsMobile] = useState(false);
 
-  const API_BASE = "http://127.0.0.1:5000";
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:5000";
 
   useEffect(() => {
     fetchAnalyticsData();
