@@ -49,7 +49,7 @@ const Navbar = () => {
       ? [
           {
             path: "/jobs",
-            label: "Job Discovery",
+            label: "Job Dashboard",
             icon: <FiBriefcase />,
           },
         ]
