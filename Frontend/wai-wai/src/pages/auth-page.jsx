@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import {
@@ -17,7 +17,7 @@ import {
   FileText,
   Users,
 } from "lucide-react";
-import "../styles/Auth.css";
+import "../styles/auth-page.css";
 
 const Auth = () => {
   const { login, register } = useAuth();

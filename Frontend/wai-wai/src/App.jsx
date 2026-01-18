@@ -8,7 +8,7 @@ import JobDashboard from "./pages/JobDashboard";
 import JobGenerator from "./pages/JobGenerator";
 import ResumeParser from "./pages/ResumeParser";
 import Analytics from "./pages/Analytics";
-import Auth from "./pages/Auth";
+import Auth from "./pages/auth-page";
 import About from "./pages/About";
 import Privacy from "./pages/Privacy";
 import Contact from "./pages/Contact";
