@@ -223,6 +223,29 @@ nav.scrolled {
   color: var(--color-primary-600);
 }
 
+.notification-bell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  color: #475569;
+  margin-right: 15px;
+}
+.nav-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: #ef4444;
+  color: white;
+  font-size: 0.65rem;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
 .mobile-nav-link.active {
   color: var(--color-primary-600);
   background-color: var(--color-primary-50);
@@ -277,6 +300,99 @@ nav.scrolled {
 .btn-icon {
   font-size: 1.25rem;
   flex-shrink: 0;
+}
+
+/* --- Append these to Navbar.css --- */
+
+/* Notification Bell Wrapper in Desktop Actions */
+.notification-bell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  color: #475569;
+  margin-right: 20px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.notification-bell:hover {
+  background-color: #f1f5f9;
+  color: #1e293b;
+}
+
+/* Red Unread Badge */
+.nav-badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background: #ef4444;
+  color: white;
+  font-size: 0.65rem;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  border: 2px solid white;
+}
+
+/* Real-Time Toast Notification Popup */
+.realtime-toast {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background: white;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  border-left: 5px solid #3b82f6;
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  z-index: 2000;
+  max-width: 350px;
+  min-width: 300px;
+}
+
+.toast-icon {
+  background: #eff6ff;
+  color: #3b82f6;
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.toast-content h4 {
+  margin: 0 0 5px 0;
+  font-size: 0.95rem;
+  color: #1e293b;
+}
+
+.toast-content p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+.toast-close {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 0;
+  margin-left: auto;
+}
+
+.toast-close:hover {
+  color: #1e293b;
 }
 
 .mobile-cta-button {

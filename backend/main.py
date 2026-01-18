@@ -24,6 +24,9 @@ import docx
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
+from typing import List, Optional, Dict, Any
+from enum import Enum
+from fastapi import WebSocket, WebSocketDisconnect
 
 # ==========================================
 # 0. ROBUST ENVIRONMENT LOADING
@@ -136,6 +139,41 @@ class GapAnalysisRequest(BaseModel):
 class PDFRequest(BaseModel):
     roadmap_data: Dict[str, Any]
     candidate_name: str
+
+class NotificationType(str, Enum):
+    JOB_MATCH = "JOB_MATCH"
+    APPLICATION_STATUS = "APPLICATION_STATUS"
+    EMPLOYER_MESSAGE = "EMPLOYER_MESSAGE"
+    SKILL_RECOMMENDATION = "SKILL_RECOMMENDATION"
+    INTERVIEW_REMINDER = "INTERVIEW_REMINDER"
+
+class NotificationPriority(str, Enum):
+    HIGH = "high"
+    MEDIUM = "medium"
+    LOW = "low"
+
+class NotificationCreate(BaseModel):
+    user_id: str
+    type: NotificationType
+    priority: NotificationPriority = NotificationPriority.MEDIUM
+    data: Dict[str, Any] = {}
+
+class NotificationResponse(BaseModel):
+    id: str
+    user_id: str
+    type: str
+    title: str
+    message: str
+    data: Dict[str, Any]
+    priority: str
+    read: bool
+    created_at: str
+
+class PreferencesUpdate(BaseModel):
+    email_enabled: Optional[bool] = None
+    push_enabled: Optional[bool] = None
+    inapp_enabled: Optional[bool] = None
+    frequency: Optional[str] = None
 
 # ==========================================
 # 3. HELPER FUNCTIONS
@@ -705,6 +743,286 @@ async def download_roadmap(request: PDFRequest):
             headers={"Content-Disposition": f"attachment; filename=Career_Roadmap_{request.candidate_name}.pdf"}
         )
 
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": str(e)})
+
+# --- TEMPLATE ENGINE ---
+def generate_notification_content(type: NotificationType, data: dict):
+    """
+    Simple template engine to generate Title and Message based on type.
+    """
+    templates = {
+        NotificationType.JOB_MATCH: {
+            "title": "New Job Match Found! 🎯",
+            "message": "We found a {match_score}% match for {job_title} at {company}."
+        },
+        NotificationType.APPLICATION_STATUS: {
+            "title": "Application Update 📄",
+            "message": "Your application for {job_title} has moved to {status}."
+        },
+        NotificationType.EMPLOYER_MESSAGE: {
+            "title": "New Message from Employer 💬",
+            "message": "{company} sent you a message regarding {job_title}."
+        },
+        NotificationType.SKILL_RECOMMENDATION: {
+            "title": "Skill Boost Recommended 🚀",
+            "message": "Learn {skill} to increase your match score for {target_role} roles."
+        },
+        NotificationType.INTERVIEW_REMINDER: {
+            "title": "Interview Reminder ⏰",
+            "message": "You have an interview for {job_title} tomorrow at {time}."
+        }
+    }
+    
+    tmpl = templates.get(type, {"title": "New Notification", "message": "You have a new update."})
+    
+    # Safe formatting using .format()
+    try:
+        title = tmpl["title"]
+        message = tmpl["message"].format(**data)
+    except KeyError as e:
+        # Fallback if data is missing keys
+        message = tmpl["message"] + " (Details available)"
+        
+    return title, message
+
+class ConnectionManager:
+    def __init__(self):
+        # Stores active connections: {user_id: WebSocket}
+        self.active_connections: Dict[str, WebSocket] = {}
+
+    async def connect(self, websocket: WebSocket, user_id: str):
+        await websocket.accept()
+        self.active_connections[user_id] = websocket
+        print(f"✅ User {user_id} connected via WebSocket")
+
+    def disconnect(self, user_id: str):
+        if user_id in self.active_connections:
+            del self.active_connections[user_id]
+            print(f"❌ User {user_id} disconnected")
+
+    async def send_personal_message(self, message: dict, user_id: str):
+        if user_id in self.active_connections:
+            try:
+                await self.active_connections[user_id].send_json(message)
+                return True
+            except Exception as e:
+                print(f"⚠️ WebSocket Send Error: {e}")
+                self.disconnect(user_id)
+        return False
+
+manager = ConnectionManager()
+
+# --- ENDPOINTS ---
+
+# ... (Place this near your other endpoints)
+
+# 1. WEBSOCKET ENDPOINT
+@app.websocket("/ws/{user_id}")
+async def websocket_endpoint(websocket: WebSocket, user_id: str):
+    await manager.connect(websocket, user_id)
+    try:
+        while True:
+            # Keep connection alive, listen for any client messages (optional heartbeat)
+            data = await websocket.receive_text()
+            # We mostly push FROM server, but we can log client pings
+            print(f"📩 Msg from {user_id}: {data}")
+    except WebSocketDisconnect:
+        manager.disconnect(user_id)
+
+# 2. UPDATE EXISTING 'send_notification' to Broadcast Real-Time
+@app.post("/notifications/send")
+async def send_notification(notification: NotificationCreate):
+    """
+    Creates a notification, persists to DB, and PUSHES via WebSocket.
+    """
+    if not supabase:
+        raise HTTPException(status_code=503, detail="Database not available")
+
+    try:
+        # A. Logic to Check Preferences & Generate Content (Same as before)
+        prefs_query = supabase.table("notification_preferences").select("*").eq("user_id", notification.user_id).execute()
+        prefs = prefs_query.data[0] if prefs_query.data else {
+            "email_enabled": True, "push_enabled": True, "inapp_enabled": True
+        }
+
+        title, message = generate_notification_content(notification.type, notification.data)
+
+        # B. Persist to Database (System of Record)
+        notif_data = {
+            "user_id": notification.user_id,
+            "type": notification.type.value,
+            "title": title,
+            "message": message,
+            "data": notification.data,
+            "priority": notification.priority.value,
+            "read": False
+        }
+        
+        insert_res = supabase.table("notifications").insert(notif_data).execute()
+        new_notif = insert_res.data[0]
+        
+        # C. --- REAL-TIME PUSH (THE NEW PART) ---
+        # If In-App is enabled, push instantly via WebSocket
+        ws_sent = False
+        if prefs.get("inapp_enabled", True):
+            ws_payload = {
+                "type": "NEW_NOTIFICATION",
+                "notification": new_notif,
+                "unread_count": 1 # You might want to fetch actual count here
+            }
+            ws_sent = await manager.send_personal_message(ws_payload, notification.user_id)
+
+        # D. Mock Email/Push (Same as before)
+        # ... (Your existing email logic)
+
+        return {
+            "success": True, 
+            "notification_id": new_notif['id'], 
+            "real_time_delivery": ws_sent
+        }
+
+    except Exception as e:
+        print(f"Notification Error: {e}")
+        return JSONResponse(status_code=500, content={"error": str(e)})
+
+@app.post("/notifications/send")
+async def send_notification(notification: NotificationCreate):
+    """
+    Creates a notification, checks preferences, and logs delivery.
+    """
+    if not supabase:
+        raise HTTPException(status_code=503, detail="Database not available")
+
+    try:
+        # 1. Check User Preferences
+        # First time users might not have rows, assume defaults (True)
+        prefs_query = supabase.table("notification_preferences").select("*").eq("user_id", notification.user_id).execute()
+        prefs = prefs_query.data[0] if prefs_query.data else {
+            "email_enabled": True, "push_enabled": True, "inapp_enabled": True
+        }
+
+        # 2. Generate Content
+        title, message = generate_notification_content(notification.type, notification.data)
+
+        # 3. Store In-App Notification (System of Record)
+        # We always store it unless blocked specifically (but usually we store history regardless)
+        notif_data = {
+            "user_id": notification.user_id,
+            "type": notification.type.value,
+            "title": title,
+            "message": message,
+            "data": notification.data,
+            "priority": notification.priority.value,
+            "read": False
+        }
+        
+        insert_res = supabase.table("notifications").insert(notif_data).execute()
+        new_notif = insert_res.data[0]
+        notif_id = new_notif['id']
+
+        # 4. Multi-Channel Delivery (Mock Logic for Bonus)
+        delivery_logs = []
+        
+        # Channel: In-App (Already stored, just logging status)
+        if prefs.get("inapp_enabled", True):
+             delivery_logs.append({"notification_id": notif_id, "channel": "in-app", "status": "sent"})
+
+        # Channel: Email (Mock)
+        if prefs.get("email_enabled", True) and notification.priority in ["high", "medium"]:
+            # Here you would call SendGrid/SMTP
+            print(f"📧 [MOCK EMAIL] To: {notification.user_id} | Subject: {title}")
+            delivery_logs.append({"notification_id": notif_id, "channel": "email", "status": "sent"})
+        
+        # Channel: Push (Mock)
+        if prefs.get("push_enabled", True) and notification.priority == "high":
+            # Here you would use FCM
+            print(f"📲 [MOCK PUSH] To: {notification.user_id} | Body: {message}")
+            delivery_logs.append({"notification_id": notif_id, "channel": "push", "status": "sent"})
+
+        # 5. Log Deliveries
+        if delivery_logs:
+            supabase.table("notification_logs").insert(delivery_logs).execute()
+
+        return {"success": True, "notification_id": notif_id, "delivered_channels": [l['channel'] for l in delivery_logs]}
+
+    except Exception as e:
+        print(f"Notification Error: {e}")
+        return JSONResponse(status_code=500, content={"error": str(e)})
+
+@app.get("/notifications/user/{user_id}")
+async def get_user_notifications(user_id: str, page: int = 1, limit: int = 20):
+    if not supabase: return []
+    try:
+        offset = (page - 1) * limit
+        # Get notifications ordered by created_at desc
+        response = supabase.table("notifications")\
+            .select("*")\
+            .eq("user_id", user_id)\
+            .order("created_at", desc=True)\
+            .range(offset, offset + limit - 1)\
+            .execute()
+        return response.data
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": str(e)})
+
+@app.get("/notifications/user/{user_id}/unread-count")
+async def get_unread_count(user_id: str):
+    if not supabase: return {"count": 0}
+    try:
+        # Supabase count requires head=True or separate query
+        response = supabase.table("notifications")\
+            .select("*", count="exact")\
+            .eq("user_id", user_id)\
+            .eq("read", False)\
+            .execute()
+        return {"count": response.count}
+    except Exception as e:
+        return {"count": 0}
+
+@app.patch("/notifications/{notification_id}/read")
+async def mark_notification_read(notification_id: str):
+    if not supabase: return {"success": False}
+    try:
+        supabase.table("notifications").update({"read": True}).eq("id", notification_id).execute()
+        return {"success": True}
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": str(e)})
+
+@app.post("/notifications/bulk-read")
+async def mark_bulk_read(payload: Dict[str, Any]):
+    # payload: { "notification_ids": ["id1", "id2"] }
+    ids = payload.get("notification_ids", [])
+    if not supabase or not ids: return {"success": False}
+    try:
+        supabase.table("notifications").update({"read": True}).in_("id", ids).execute()
+        return {"success": True}
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": str(e)})
+
+@app.get("/notifications/user/{user_id}/preferences")
+async def get_preferences(user_id: str):
+    if not supabase: return {}
+    try:
+        res = supabase.table("notification_preferences").select("*").eq("user_id", user_id).single().execute()
+        if not res.data:
+            # Return defaults if no record exists
+            return {"email_enabled": True, "push_enabled": True, "inapp_enabled": True, "frequency": "immediate"}
+        return res.data
+    except Exception as e:
+        # single() raises error if not found, handle gracefully
+        return {"email_enabled": True, "push_enabled": True, "inapp_enabled": True, "frequency": "immediate"}
+
+@app.put("/notifications/user/{user_id}/preferences")
+async def update_preferences(user_id: str, prefs: PreferencesUpdate):
+    if not supabase: return {"success": False}
+    try:
+        # Check if exists, if not insert, else update (upsert)
+        data = prefs.model_dump(exclude_unset=True)
+        data["user_id"] = user_id
+        
+        supabase.table("notification_preferences").upsert(data).execute()
+        return {"success": True}
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": str(e)})
 
