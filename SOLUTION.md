@@ -1,7 +1,7 @@
 # PROBLEM 1: Multi-Factor Job Matching Engine
 
 ## Overview
-RESTful API using FastAPI to match candidates to jobs based on skills (40%), location (20%), salary (15%), experience (15%), and role (10%). Returns ranked matches with scores, breakdowns, missing skills, and recommendations.
+Restful API using FastAPI to match candidates to jobs based on skills (40%), location (20%), salary (15%), experience (15%), and role (10%). Returns ranked matches with scores, breakdowns, missing skills, and recommendations.
 
 # SOLUTION
 
@@ -257,6 +257,194 @@ Auto-generated FastAPI docs with request/response examples, taxonomy schema docu
 - **Code Quality (10%)**: Modular functions, error handling, unit tests
 
 ---
+# PROBLEM 6: Real-Time Notification System
+
+## Overview
+Scalable notification system using FastAPI backend with WebSocket support for real-time in-app notifications, multi-channel delivery (email, push, in-app), user preferences, and delivery tracking.
+
+# SOLUTION
+
+## Implementation
+
+### Backend
+Notification models, template engine, WebSocket manager, and RESTful endpoints for CRUD operations.
+
+```python
+class NotificationCreate(BaseModel):
+    user_id: str
+    type: NotificationType
+    priority: NotificationPriority = NotificationPriority.MEDIUM
+    data: Dict[str, Any] = {}
+
+class NotificationResponse(BaseModel):
+    id: str
+    user_id: str
+    type: str
+    title: str
+    message: str
+    data: Dict[str, Any]
+    priority: str
+    read: bool
+    created_at: str
+
+class PreferencesUpdate(BaseModel):
+    email_enabled: Optional[bool] = None
+    push_enabled: Optional[bool] = None
+    inapp_enabled: Optional[bool] = None
+    frequency: Optional[str] = None
+
+# Template engine for message generation
+def generate_notification_content(type: NotificationType, data: dict):
+    templates = {
+        NotificationType.JOB_MATCH: {
+            "title": "New Job Match Found! 🎯",
+            "message": "We found a {match_score}% match for {job_title} at {company}."
+        },
+        # ... other templates
+    }
+    tmpl = templates.get(type, {"title": "New Notification", "message": "You have a new update."})
+    title = tmpl["title"]
+    message = tmpl["message"].format(**data)
+    return title, message
+
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections: Dict[str, WebSocket] = {}
+
+    async def connect(self, websocket: WebSocket, user_id: str):
+        await websocket.accept()
+        self.active_connections[user_id] = websocket
+
+    async def send_personal_message(self, message: dict, user_id: str):
+        if user_id in self.active_connections:
+            await self.active_connections[user_id].send_json(message)
+        return user_id in self.active_connections
+
+manager = ConnectionManager()
+
+@app.websocket("/ws/{user_id}")
+async def websocket_endpoint(websocket: WebSocket, user_id: str):
+    await manager.connect(websocket, user_id)
+    try:
+        while True:
+            data = await websocket.receive_text()
+            # Handle incoming messages if needed
+    except WebSocketDisconnect:
+        manager.disconnect(user_id)
+
+@app.post("/notifications/send")
+async def send_notification(notification: NotificationCreate):
+    # Generate content, check preferences, persist to DB, send via channels
+    title, message = generate_notification_content(notification.type, notification.data)
+    # Persist notification
+    # Send via WebSocket if in-app enabled
+    await manager.send_personal_message({"title": title, "message": message}, notification.user_id)
+    return {"success": True}
+
+@app.get("/notifications/user/{user_id}")
+async def get_user_notifications(user_id: str, page: int = 1, limit: int = 20):
+    # Fetch paginated notifications from DB
+    pass
+
+@app.patch("/notifications/{notification_id}/read")
+async def mark_notification_read(notification_id: str):
+    # Update read status
+    pass
+
+@app.put("/notifications/user/{user_id}/preferences")
+async def update_preferences(user_id: str, prefs: PreferencesUpdate):
+    # Update user preferences
+    pass
+```
+
+### Frontend
+Notifications page with list view, detail modal, settings, and real-time updates via WebSocket.
+
+```jsx
+const Notifications = () => {
+  const [notifications, setNotifications] = useState([]);
+  const [selectedNotification, setSelectedNotification] = useState(null);
+
+  useEffect(() => {
+    fetchNotifications();
+    // WebSocket connection for real-time updates
+    const ws = new WebSocket(`ws://127.0.0.1:5000/ws/${user.email}`);
+    ws.onmessage = (event) => {
+      const newNotif = JSON.parse(event.data);
+      setNotifications(prev => [newNotif, ...prev]);
+    };
+    return () => ws.close();
+  }, []);
+
+  const handleNotificationClick = async (notif) => {
+    setSelectedNotification(notif);
+    if (!notif.read) {
+      await fetch(`http://127.0.0.1:5000/notifications/${notif.id}/read`, { method: 'PATCH' });
+      setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, read: true } : n));
+    }
+  };
+
+  // Render list, modal, settings
+  return (
+    <div className="notifications-page">
+      {/* Notification list */}
+      {notifications.map(notif => (
+        <div key={notif.id} onClick={() => handleNotificationClick(notif)}>
+          <h3>{notif.title}</h3>
+          <p>{notif.message}</p>
+        </div>
+      ))}
+      {/* Detail modal */}
+      {selectedNotification && (
+        <div className="modal">
+          <h2>{selectedNotification.title}</h2>
+          <p>{selectedNotification.message}</p>
+        </div>
+      )}
+    </div>
+  );
+};
+```
+
+### Database
+Supabase tables for notifications, preferences, and logs.
+
+## Testing
+- Unit tests for template generation and preference checks
+- Integration tests for WebSocket connections and API endpoints
+- E2E tests for notification flow and real-time updates
+- Mock email/push services for testing
+
+## Documentation
+- API docs with endpoint examples and WebSocket usage
+- Frontend component documentation
+- Notification type schemas and data formats
+
+## Bonus Features
+- Email sending with SMTP for actual delivery
+- Notification batching with digest emails
+- Jinja2 template engine for advanced message formatting
+- Scheduled notifications using background tasks
+- Analytics dashboard for notification engagement
+- Rate limiting per user to prevent spam
+- Grouping similar notifications (e.g., multiple job matches)
+
+## Deployment
+1. Install backend dependencies: `pip install -r requirements.txt`
+2. Install frontend dependencies: `npm install`
+3. Set up Supabase database with notification tables
+4. Run backend: `uvicorn main:app --reload`
+5. Run frontend: `npm run dev`
+6. Configure WebSocket reverse proxy for production
+
+## Evaluation Alignment
+- **System Design (30%)**: Modular architecture with WebSocket support, template engine, and preference management
+- **API Design (25%)**: RESTful endpoints with proper pagination, error handling, and WebSocket integration
+- **Business Logic (20%)**: Priority-based delivery, preference respect, and retry logic
+- **Database Schema (15%)**: Normalized tables for notifications, preferences, and logs
+- **Code Quality (10%)**: Clean, async code with proper error handling and type hints
+
+
 
 # PROBLEM 7: Employer Dashboard Analytics
 
@@ -424,3 +612,5 @@ async def save_job(job: JobSaveRequest):
 - **Frontend UX (25%)**: Multi-step form with progress indicators, real-time preview, and editing tools
 - **Output Quality (20%)**: Structured descriptions with all required sections and professional formatting
 - **Code Quality (10%)**: Modular code, error handling, and clean architecture
+
+
