@@ -9,6 +9,9 @@ import JobGenerator from "./pages/JobGenerator";
 import ResumeParser from "./pages/ResumeParser";
 import Analytics from "./pages/Analytics";
 import Auth from "./pages/Auth";
+import About from "./pages/About";
+import Privacy from "./pages/Privacy";
+import Contact from "./pages/Contact";
 import ProtectedRoute from "./components/ProtectedRoute";
 import "./App.css";
 
@@ -31,6 +34,11 @@ function App() {
               <Route path="/" element={<Home />} />
 
               <Route path="/auth" element={<Auth />} />
+
+              {/* Public informational pages */}
+              <Route path="/about" element={<About />} />
+              <Route path="/privacy" element={<Privacy />} />
+              <Route path="/contact" element={<Contact />} />
 
               {/* Job Dashboard: Requires Login */}
               <Route

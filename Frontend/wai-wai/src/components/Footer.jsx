@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { FiBriefcase, FiLinkedin, FiTwitter, FiGithub } from "react-icons/fi";
+import { Link } from "react-router-dom";
+import { FiLinkedin, FiTwitter, FiGithub } from "react-icons/fi";
 import "../styles/Footer.css";
-import wevolveLogo from '../assets/wevolve_logo.png';
+import wevolveLogo from "../assets/wevolve_logo.png";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -15,10 +16,7 @@ const Footer = () => {
     }
   };
 
-  const handleLinkClick = (path) => {
-    // Handle navigation - replace with your routing logic
-    console.log("Navigate to:", path);
-  };
+  // No custom router logic needed; use <Link> for navigation
 
   return (
     <footer className="footer">
@@ -27,12 +25,12 @@ const Footer = () => {
         <div className="footer__content">
           {/* Brand */}
           <div className="footer__brand">
-          <div className="footer__logo">
+            <div className="footer__logo">
               {/* Replaced Icon with Image */}
-              <img 
-                src={wevolveLogo} 
-                alt="Wevolve AI" 
-                style={{ height: '32px', width: 'auto', marginRight: '8px' }} 
+              <img
+                src={wevolveLogo}
+                alt="Wevolve AI"
+                style={{ height: "32px", width: "auto", marginRight: "8px" }}
               />
               <span className="footer__logo-text">Wevolve AI</span>
             </div>
@@ -41,30 +39,18 @@ const Footer = () => {
 
           {/* Links */}
           <div className="footer__links">
-            <button
-              onClick={() => handleLinkClick("/generate-job")}
-              className="footer__link"
-            >
+            <Link to="/generate-job" className="footer__link">
               Job Generator
-            </button>
-            <button
-              onClick={() => handleLinkClick("/")}
-              className="footer__link"
-            >
+            </Link>
+            <Link to="/about" className="footer__link">
               About
-            </button>
-            <button
-              onClick={() => handleLinkClick("/")}
-              className="footer__link"
-            >
+            </Link>
+            <Link to="/privacy" className="footer__link">
               Privacy
-            </button>
-            <button
-              onClick={() => handleLinkClick("/")}
-              className="footer__link"
-            >
+            </Link>
+            <Link to="/contact" className="footer__link">
               Contact
-            </button>
+            </Link>
           </div>
 
           {/* Social */}
