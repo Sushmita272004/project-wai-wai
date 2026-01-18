@@ -16,6 +16,8 @@ import {
   FiList,
   FiUploadCloud,
   FiX,
+  FiChevronLeft,
+  FiChevronRight,
 } from "react-icons/fi";
 import "../styles/JobDashboard.css";
 
@@ -26,7 +28,7 @@ const JobDashboard = () => {
   const [sortBy, setSortBy] = useState("matchScore");
 
   // --- RESUME MATCHING STATES ---
-  const [resumeData, setResumeData] = useState(null); // Stores parsed resume
+  const [resumeData, setResumeData] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef(null);
 
@@ -39,10 +41,13 @@ const JobDashboard = () => {
     datePosted: "any",
   });
 
+  // --- PAGINATION STATE ---
+  const ITEMS_PER_PAGE = 12;
+  const [currentPage, setCurrentPage] = useState(1);
+
   // --- MOBILE OPTIMIZATIONS ---
   const deferredSearchTerm = useDeferredValue(searchTerm);
   const [isMobile, setIsMobile] = useState(false);
-  const [visibleCount, setVisibleCount] = useState(16);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -55,14 +60,21 @@ const JobDashboard = () => {
   }, []);
 
   useEffect(() => {
-    // Adjust defaults for mobile for better UX
+    // Force list view on mobile for better UX
     if (isMobile) {
-      setViewMode((prev) => (prev === "grid" ? "list" : prev));
-      setVisibleCount(10);
-    } else {
-      setVisibleCount(24);
+      setViewMode("list");
     }
   }, [isMobile]);
+
+  // Scroll to top whenever page changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [currentPage]);
+
+  // Reset to Page 1 if search/filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, filters, sortBy]);
 
   useEffect(() => {
     // Prevent background scroll when filters are open (mobile overlay)
@@ -80,7 +92,6 @@ const JobDashboard = () => {
     setIsUploading(true);
     const formData = new FormData();
     formData.append("file", file);
-    // We don't need a specific JD for general matching, sending empty
     formData.append("job_description", "");
 
     try {
@@ -93,7 +104,7 @@ const JobDashboard = () => {
       if (res.ok) {
         setResumeData(data.extracted_data);
         alert(
-          `✅ Resume Parsed! Jobs are now ranked for ${data.extracted_data.name}.`,
+          `✅ Resume Parsed! Jobs are now ranked for ${data.extracted_data.name}.`
         );
       } else {
         alert("Parsing failed. Please try again.");
@@ -103,7 +114,6 @@ const JobDashboard = () => {
       alert("Network Error: Is backend running?");
     } finally {
       setIsUploading(false);
-      // Reset input so same file can be selected again if needed
       if (fileInputRef.current) fileInputRef.current.value = "";
     }
   };
@@ -113,7 +123,6 @@ const JobDashboard = () => {
   };
 
   // --- 2. SMART MATCHING LOGIC ---
-  // If resume is uploaded, we recalculate scores dynamically
   const jobsWithScores = useMemo(() => {
     if (!resumeData) return mockJobs;
 
@@ -126,25 +135,19 @@ const JobDashboard = () => {
 
       const matchingSkills = jobSkills.filter((skill) =>
         userSkills.some(
-          (userSkill) => userSkill.includes(skill) || skill.includes(userSkill),
-        ),
+          (userSkill) => userSkill.includes(skill) || skill.includes(userSkill)
+        )
       );
 
       const skillMatchRatio =
         jobSkills.length > 0 ? matchingSkills.length / jobSkills.length : 0;
       score += skillMatchRatio * 60;
 
-      // B. Experience Match (Weight: 20%)
-      // Heuristic: If user has enough exp, full points. If slightly less, partial.
-      // We assume user experience is just a number in the list for simplicity, or we parse it.
-      // Since parsed exp is an array of strings, we'll do a basic check or just skip for now to keep it robust.
-      // Let's rely heavily on skills for this mock.
-      score += 20; // Base boost for having a resume
-
-      // C. Location Match (Weight: 10%) (Optional)
+      // B. Experience Match (Weight: 20%) & Base Boost
+      score += 20;
 
       // Cap score at 98%
-      const finalScore = Math.min(98, Math.round(score + 10)); // +10 base
+      const finalScore = Math.min(98, Math.round(score + 10));
 
       return { ...job, matchScore: finalScore };
     });
@@ -183,12 +186,16 @@ const JobDashboard = () => {
           return new Date(b.postedDate) - new Date(a.postedDate);
         return 0;
       });
-  }, [searchTerm, filters, sortBy, jobsWithScores]);
+  }, [deferredSearchTerm, filters, sortBy, jobsWithScores]);
 
-  // Limit jobs on mobile and add incremental loading
+  // --- 4. PAGINATION LOGIC ---
+  const totalPages = Math.ceil(filteredJobs.length / ITEMS_PER_PAGE);
+
   const displayedJobs = useMemo(() => {
-    return filteredJobs.slice(0, visibleCount);
-  }, [filteredJobs, visibleCount]);
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
+    return filteredJobs.slice(startIndex, endIndex);
+  }, [filteredJobs, currentPage]);
 
   return (
     <div className="job-dashboard-container">
@@ -346,20 +353,44 @@ const JobDashboard = () => {
             )}
           </div>
 
-          {isMobile && displayedJobs.length < filteredJobs.length && (
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                marginTop: "var(--space-4)",
-              }}
-            >
+          {/* --- PAGINATION CONTROLS --- */}
+          {filteredJobs.length > ITEMS_PER_PAGE && (
+            <div className="pagination-container">
+              {/* Previous Arrow */}
               <button
-                className="job-mobile-load-more-btn"
-                onClick={() => setVisibleCount((c) => c + 10)}
-                aria-label="Load more jobs"
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="pagination-arrow"
+                aria-label="Previous Page"
               >
-                Load More
+                <FiChevronLeft />
+              </button>
+
+              {/* Page Numbers */}
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                (number) => (
+                  <button
+                    key={number}
+                    onClick={() => setCurrentPage(number)}
+                    className={`pagination-number ${
+                      currentPage === number ? "active" : ""
+                    }`}
+                  >
+                    {number}
+                  </button>
+                )
+              )}
+
+              {/* Next Arrow */}
+              <button
+                onClick={() =>
+                  setCurrentPage((p) => Math.min(totalPages, p + 1))
+                }
+                disabled={currentPage === totalPages}
+                className="pagination-arrow"
+                aria-label="Next Page"
+              >
+                <FiChevronRight />
               </button>
             </div>
           )}
@@ -376,6 +407,51 @@ const JobDashboard = () => {
 
       <style>{`
         @media (min-width: 769px) { .mobile-only { display: none !important; } }
+        
+        /* Pagination Styles */
+        .pagination-container {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 8px;
+          margin-top: 30px;
+          padding-bottom: 20px;
+          flex-wrap: wrap;
+        }
+
+        .pagination-arrow,
+        .pagination-number {
+          background: white;
+          border: 1px solid #e2e8f0;
+          border-radius: 6px;
+          padding: 8px 14px;
+          cursor: pointer;
+          font-weight: 500;
+          color: #4a5568;
+          transition: all 0.2s;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          min-width: 36px;
+        }
+
+        .pagination-arrow:hover:not(:disabled),
+        .pagination-number:hover {
+          background-color: #f7fafc;
+          border-color: #cbd5e0;
+        }
+
+        .pagination-number.active {
+          background-color: #3b82f6;
+          color: white;
+          border-color: #3b82f6;
+        }
+
+        .pagination-arrow:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+          background-color: #f1f5f9;
+        }
       `}</style>
     </div>
   );
