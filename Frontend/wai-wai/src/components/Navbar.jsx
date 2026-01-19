@@ -15,7 +15,6 @@ import {
   FiBell,
   FiInfo, // Added for Toast Icon
 } from "react-icons/fi";
-import "../styles/Navbar.css";
 
 const Navbar = () => {
   const { user, logout } = useAuth();

@@ -24,8 +24,6 @@ import {
   FiAward,
   FiTarget,
 } from "react-icons/fi";
-import "../styles/Analytics.css";
-
 const COLORS = [
   "#6366f1",
   "#8b5cf6",

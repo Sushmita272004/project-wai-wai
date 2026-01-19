@@ -15,7 +15,6 @@ import {
   FiX,
   FiArrowRight,
 } from "react-icons/fi";
-import "../styles/Notifications.css";
 
 const Notifications = () => {
   const { user } = useAuth();

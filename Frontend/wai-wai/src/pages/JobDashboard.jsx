@@ -19,7 +19,6 @@ import {
   FiChevronLeft,
   FiChevronRight,
 } from "react-icons/fi";
-import "../styles/JobDashboard.css";
 
 const JobDashboard = () => {
   const [searchTerm, setSearchTerm] = useState("");

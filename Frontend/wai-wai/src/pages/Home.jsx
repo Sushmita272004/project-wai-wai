@@ -8,7 +8,7 @@ import {
   FiPlusCircle,
   FiBarChart2,
 } from "react-icons/fi";
-import "../styles/Home.css";
+
 
 const Home = () => {
   const navigate = useNavigate();

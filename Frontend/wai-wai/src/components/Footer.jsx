@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { FiLinkedin, FiTwitter, FiGithub } from "react-icons/fi";
-import "../styles/Footer.css";
 import wevolveLogo from "../assets/wevolve_logo.png";
 
 const Footer = () => {

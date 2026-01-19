@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { jsPDF } from "jspdf";
 import { motion, AnimatePresence } from "framer-motion";
-import "../styles/JobGenerator.css";
 import {
   FiChevronRight,
   FiChevronLeft,

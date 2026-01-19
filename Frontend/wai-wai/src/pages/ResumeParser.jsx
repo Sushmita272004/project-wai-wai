@@ -1,6 +1,5 @@
 // frontend/wai-wai/src/pages/ResumeParser.jsx
 import React, { useState } from "react";
-import "../styles/ResumeParser.css";
 
 const ResumeParser = () => {
   const [file, setFile] = useState(null);
@@ -441,5 +440,29 @@ const ResumeParser = () => {
       )}
     </div>
   );
+
+  
+};
+
+// --- ADD THIS AT THE BOTTOM OF ResumeParser.jsx ---
+const styles = {
+  label: {
+    display: "block",
+    marginBottom: "5px",
+    fontWeight: "600",
+    color: "#374151",
+    fontSize: "0.875rem",
+  },
+  input: {
+    width: "100%",
+    padding: "0.5rem",
+    borderRadius: "0.375rem",
+    border: "1px solid #d1d5db",
+    boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+    fontSize: "0.875rem",
+    lineHeight: "1.25rem",
+    marginBottom: "0.5rem",
+    fontFamily: "inherit",
+  }
 };
 export default ResumeParser;

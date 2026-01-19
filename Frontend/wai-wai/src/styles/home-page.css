@@ -84,7 +84,7 @@
   box-shadow: var(--shadow-lg);
   display: inline-block;
   text-decoration: none;
-  align-self: flex-start; /* keep button toward left */
+  align-self: flex-start;
   margin-left: 0;
   width: fit-content;
 }
@@ -164,7 +164,11 @@
 }
 
 .feature-card {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(249, 250, 251, 0.95));
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.95),
+    rgba(249, 250, 251, 0.95)
+  );
   backdrop-filter: blur(10px);
   border-radius: var(--radius-lg);
   padding: var(--space-8);
@@ -172,7 +176,8 @@
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   border: 1px solid transparent;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
   position: relative;
   overflow: hidden;
   display: flex;
@@ -195,7 +200,8 @@
     var(--color-primary-400)
   );
   background-size: 200% 200%;
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   opacity: 0;
@@ -225,10 +231,13 @@
 
 .feature-card:hover {
   transform: translateY(-12px) scale(1.02);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 
-              0 10px 10px -5px rgba(0, 0, 0, 0.1),
-              0 0 0 1px rgba(99, 102, 241, 0.1);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 1), rgba(249, 250, 251, 1));
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15),
+    0 10px 10px -5px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(99, 102, 241, 0.1);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 1),
+    rgba(249, 250, 251, 1)
+  );
 }
 
 .feature-card:hover::before {
@@ -294,7 +303,22 @@
 
 .feature-description {
   font-size: 0.95rem;
-  color: var(--color3s cubic-bezier(0.4, 0, 0.2, 1);
+  color: var(--color-gray-600);
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.feature-lock {
+  display: inline-block;
+  font-size: 0.8rem;
+  color: var(--color-gray-600);
+  font-weight: 500;
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-gray-100);
+  border-radius: var(--radius-full);
+  margin-top: auto;
+  transition: all 0.2s ease;
   position: relative;
   z-index: 1;
   overflow: hidden;
@@ -304,7 +328,11 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, var(--color-primary-100), var(--color-secondary-100));
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-100),
+    var(--color-secondary-100)
+  );
   opacity: 0;
   transition: opacity 0.3s ease;
   z-index: -1;
@@ -316,15 +344,10 @@
 }
 
 .feature-card:hover .feature-lock::before {
-  opacity: 1
-.feature-lock {
-  display: inline-block;
-  font-size: 0.8rem;
-  color: var(--color-gray-600);
-  font-weight: 500;
-  padding: var(--space-2) var(--space-4);
- 
+  opacity: 1;
+}
 
+/* Animations */
 @keyframes gradientShift {
   0% {
     background-position: 0% 50%;
@@ -338,24 +361,15 @@
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
     opacity: 0.8;
   }
-} background: var(--color-gray-100);
-  border-radius: var(--radius-full);
-  margin-top: auto;
-  transition: all 0.2s ease;
 }
 
-.feature-card:hover .feature-lock {
-  background: var(--color-primary-100);
-  color: var(--color-primary-700);
-}
-
-/* Animations */
 @keyframes fadeInDown {
   from {
     opacity: 0;
