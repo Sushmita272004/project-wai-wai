@@ -8,7 +8,7 @@ import base64
 from pathlib import Path
 from datetime import datetime, timedelta
 import random
-from fastapi import FastAPI, UploadFile, File, Form, HTTPException
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
 from pydantic import BaseModel
@@ -24,9 +24,7 @@ import docx
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
-from typing import List, Optional, Dict, Any
 from enum import Enum
-from fastapi import WebSocket, WebSocketDisconnect
 
 # ==========================================
 # 0. ROBUST ENVIRONMENT LOADING
@@ -87,10 +85,10 @@ groq_client = Groq(api_key=groq_key)
 hf_client = InferenceClient(token=hf_token)
 
 # Gemini Client
+# FIX: Using genai.configure() instead of genai.Client() to resolve initialization error
 gemini_client = None
 if gemini_key:
     try:
-        # Configure Gemini API
         genai.configure(api_key=gemini_key)
         print("✅ Gemini API configured.")
     except Exception as e:
@@ -714,6 +712,7 @@ async def parse_resume(file: UploadFile = File(...), job_description: str = Form
                 }
                 """
 
+                # FIX: Use genai.GenerativeModel which works with genai.configure()
                 model = genai.GenerativeModel('gemini-2.0-flash')
                 file_data = {
                     "mime_type": file_mime,
@@ -1103,70 +1102,6 @@ async def send_notification(notification: NotificationCreate):
             "notification_id": new_notif['id'], 
             "real_time_delivery": ws_sent
         }
-
-    except Exception as e:
-        print(f"Notification Error: {e}")
-        return JSONResponse(status_code=500, content={"error": str(e)})
-
-@app.post("/notifications/send")
-async def send_notification(notification: NotificationCreate):
-    """
-    Creates a notification, checks preferences, and logs delivery.
-    """
-    if not supabase:
-        raise HTTPException(status_code=503, detail="Database not available")
-
-    try:
-        # 1. Check User Preferences
-        # First time users might not have rows, assume defaults (True)
-        prefs_query = supabase.table("notification_preferences").select("*").eq("user_id", notification.user_id).execute()
-        prefs = prefs_query.data[0] if prefs_query.data else {
-            "email_enabled": True, "push_enabled": True, "inapp_enabled": True
-        }
-
-        # 2. Generate Content
-        title, message = generate_notification_content(notification.type, notification.data)
-
-        # 3. Store In-App Notification (System of Record)
-        # We always store it unless blocked specifically (but usually we store history regardless)
-        notif_data = {
-            "user_id": notification.user_id,
-            "type": notification.type.value,
-            "title": title,
-            "message": message,
-            "data": notification.data,
-            "priority": notification.priority.value,
-            "read": False
-        }
-        
-        insert_res = supabase.table("notifications").insert(notif_data).execute()
-        new_notif = insert_res.data[0]
-        notif_id = new_notif['id']
-
-        # 4. Multi-Channel Delivery (Mock Logic for Bonus)
-        delivery_logs = []
-        
-        # Channel: In-App (Already stored, just logging status)
-        if prefs.get("inapp_enabled", True):
-             delivery_logs.append({"notification_id": notif_id, "channel": "in-app", "status": "sent"})
-
-        # Channel: Email (Mock)
-        if prefs.get("email_enabled", True) and notification.priority in ["high", "medium"]:
-            # Here you would call SendGrid/SMTP
-            print(f"📧 [MOCK EMAIL] To: {notification.user_id} | Subject: {title}")
-            delivery_logs.append({"notification_id": notif_id, "channel": "email", "status": "sent"})
-        
-        # Channel: Push (Mock)
-        if prefs.get("push_enabled", True) and notification.priority == "high":
-            # Here you would use FCM
-            print(f"📲 [MOCK PUSH] To: {notification.user_id} | Body: {message}")
-            delivery_logs.append({"notification_id": notif_id, "channel": "push", "status": "sent"})
-
-        # 5. Log Deliveries
-        if delivery_logs:
-            supabase.table("notification_logs").insert(delivery_logs).execute()
-
-        return {"success": True, "notification_id": notif_id, "delivered_channels": [l['channel'] for l in delivery_logs]}
 
     except Exception as e:
         print(f"Notification Error: {e}")
